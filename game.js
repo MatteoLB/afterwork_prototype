@@ -18,6 +18,8 @@ let playerY = canvas.height - 90;
 let currentObstacleCount = 0;	// nombre actuel d'obstacles générés
 let maxObstacleCount = 8;		// nombre maximum d'obstacles présentes en même temps
 let obstacleProba = 12 // probabilité par défaut de générer un nouvel obstacle (1 sur N), voir fonction newObstacle()
+let framesSinceLastObstacle = 1; // nombre de frames depuis que le dernier obstacle a été généré (pour éviter des obstacles successifs impossibles à passer)
+
 let score = 0;	// (pas encore utilisé)
 
 let map = []; // tableau en 2d représentant la zone de jeu divisée en cases, 3 colonnes et le nombre de lignes correspondant à rowNumber
@@ -75,14 +77,18 @@ function drawObstacle(x, y)						// dessine chaque obstacle selon ses coordonné
 	ctx.closePath();
 }
 
-function newObstacle(obstacleProba)	// a une chance sur N d'ajouter un nouvel obstacle dans l'un des couloirs aléatoirement
-{
-	if (getRandomInt(obstacleProba) == 1) 
+
+/* A 1 chance sur N de générer un nouvel obstacle (sauf si il n'y a pas encore d'obstacle sur la map), à condition qu'un obstacle n'ait pas déjà
+   été ajouté lors de la frame précédente (pour éviter d'avoir des obstacles successifs impossibles à passer */
+function newObstacle(obstacleProba)
+{									
+	if ((getRandomInt(obstacleProba) == 1 || currentObstacleCount <= 1) && framesSinceLastObstacle > 1) 
 	{
 		let random = getRandomInt(laneNumber); // tire le couloir au sort, ajoute l'obstacle à l'array map et le dessine sur le canvas
 		map[random][0] = obstacle;
 
 		drawObstacle(random*laneWidth, 0);
+		framesSinceLastObstacle = 0;
 	}
 }
 
@@ -133,7 +139,9 @@ function gameOver()	// affiche game over
 function mainGame(handData) // fonction principale, reçoit les coordonnées de la main en paramètre
 {
 	ctx.clearRect(0, 0, canvas.width, canvas.height); // efface tout le canvas
+	
 	currentObstacleCount = 0; // remet le compteur d'obstacles à 0 (ceux-ci sont comptés lorsqu'ils sont déplacés et dessinés)
+	framesSinceLastObstacle++;	// incrémente le compteur de frames depuis le dernier obstacle
 
 	getPlayerLocation(handData); // récupère la position du joueur
 	moveObstacles(); 			 // déplace les obstacles et les redessine

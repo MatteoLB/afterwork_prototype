@@ -16,7 +16,7 @@
 </video>
 
 
-<canvas width="360" height="600" id="gameCanvas" style="border: 1px solid silver; margin: auto; display: block;"></canvas>
+<canvas width="360" height="510" id="gameCanvas" style="border: 1px solid silver; margin: auto; display: block;"></canvas>
 
 
 <!-- Place your code in the script tag below. You can also use an external .js file -->
@@ -51,7 +51,6 @@ handTrack.startVideo(video).then(function (status) // lance la vidéo
             intervalId = setInterval(function() { // récupère la frame actuelle de la vidéo, détecte la main et exécute la fonction du jeu
                 model.detect(video).then(preds => 
                 { 
-                    console.log(preds);
                     model.renderPredictions(preds, canvasVideo, ctxVideo, video); // affiche le rendu de la vidéo avec le carré bleu autour de la main
 
                     if (preds.length) // si il y a une main, exécute une frame du jeu
@@ -66,7 +65,7 @@ handTrack.startVideo(video).then(function (status) // lance la vidéo
                         }
                     }
                 });
-            }, 150); 
+            }, 100); 
             
         });
     } 
