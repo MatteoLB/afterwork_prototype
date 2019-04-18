@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Afterwork</title>
+</head>
+<body>
+
+<!-- Load the handtrackjs model. -->
+<script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
+
+<!-- Replace this with your image. Make sure CORS settings allow reading the image! -->
+<canvas id="canvasVideo" class="border" style="position: absolute; top: 10px; left: 10px;"></canvas>
+
+<video width="360" id="video" style="display: none;">
+</video>
+
+
+<canvas width="360" height="600" id="gameCanvas" style="border: 1px solid silver; margin: auto; display: block;"></canvas>
+
+
+<!-- Place your code in the script tag below. You can also use an external .js file -->
+
+<script src="game.js"></script>
+<script>
+// Notice there is no 'import' statement. 'handTrack' and 'tf' is
+// available on the index-page because of the script tag above.
+
+const canvasVideo = document.getElementById('canvasVideo');
+const ctxVideo = canvasVideo.getContext('2d');
+/*const video = document.getElementById('video');*/
+
+let intervalId;
+
+const modelParams = {
+    flipHorizontal: true,   // flip e.g for video 
+    imageScaleFactor: 0.7,  // reduce input image size for (maybe) gains in speed.
+    maxNumBoxes: 1,        // maximum number of boxes to detect
+    iouThreshold: 0.5,      // ioU threshold for non-max suppression
+    scoreThreshold: 0.79,    // confidence threshold for predictions.
+}
+      
+  
+
+handTrack.startVideo(video).then(function (status) // lance la vidéo
+{
+    if (status) 
+    {
+        handTrack.load(modelParams).then(model => 
+        { 
+            intervalId = setInterval(function() { // récupère la frame actuelle de la vidéo, détecte la main et exécute la fonction du jeu
+                model.detect(video).then(preds => 
+                { 
+                    console.log(preds);
+                    model.renderPredictions(preds, canvasVideo, ctxVideo, video); // affiche le rendu de la vidéo avec le carré bleu autour de la main
+
+                    if (preds.length) // si il y a une main, exécute une frame du jeu
+                    {
+                        let status = mainGame(preds[0].bbox); // fonction du jeu, renvoie l'état du jeu (0 pour game over, 1 pour jeu en cours)
+
+                        if (!status) // si game over, met fin à l'intervalle (termine le jeu & la détection)
+                        {
+                            clearInterval(intervalId);
+
+                            gameOver(); // affiche game over
+                        }
+                    }
+                });
+            }, 150); 
+            
+        });
+    } 
+    else 
+    {
+        console.log("Please enable video")
+    }
+})
+
+
+
+</script>
+</body>
+</html>
