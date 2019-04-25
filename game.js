@@ -66,7 +66,11 @@ function getPlayerLocation(handData) // récupère le couloir actuel du joueur s
 	}
 
 	map[playerX/laneWidth][playerY/caseSize] = player; // replace le joueur dans l'array de la map
+
+	drawPointer(handX, handY+100);
 }
+
+
 
 function drawObstacle(x, y)						// dessine chaque obstacle selon ses coordonnées x et y
 {
@@ -77,6 +81,14 @@ function drawObstacle(x, y)						// dessine chaque obstacle selon ses coordonné
 	ctx.closePath();
 }
 
+function drawPointer(x, y)	// dessine un pointeur indiquant la position de la main
+{
+	ctx.beginPath();
+	ctx.rect(x, y, caseSize, caseSize);
+	ctx.fillStyle = "rgba(0,0,0,0.1)";
+	ctx.fill();
+	ctx.closePath();
+}
 
 /* A 1 chance sur N de générer un nouvel obstacle (sauf si il n'y a pas encore d'obstacle sur la map), à condition qu'un obstacle n'ait pas déjà
    été ajouté lors de la frame précédente (pour éviter d'avoir des obstacles successifs impossibles à passer */
@@ -122,7 +134,7 @@ function drawPlayer() // dessine un rectangle en guise de joueur
 {
 	ctx.beginPath();
 	ctx.rect(playerX+laneWidth/4, playerY, laneWidth/2, caseSize);
-	ctx.fillStyle = "silver";
+	ctx.fillStyle = "red";
 	ctx.fill();
 	ctx.closePath();
 }
@@ -139,7 +151,7 @@ function gameOver()	// affiche game over
 function mainGame(handData) // fonction principale, reçoit les coordonnées de la main en paramètre
 {
 	ctx.clearRect(0, 0, canvas.width, canvas.height); // efface tout le canvas
-	
+
 	currentObstacleCount = 0; // remet le compteur d'obstacles à 0 (ceux-ci sont comptés lorsqu'ils sont déplacés et dessinés)
 	framesSinceLastObstacle++;	// incrémente le compteur de frames depuis le dernier obstacle
 
