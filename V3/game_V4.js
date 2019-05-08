@@ -1,152 +1,13 @@
-class Sprite
-{
-	constructor(img, renderWidth, renderHeight, width, height, numberOfFrames, x, y, lane, totalSteps)
-	{
-		this.img = img;
-		this.renderWidth = renderWidth;
-		this.renderHeight = renderHeight;
-		this.width = width;
-		this.height = height;
-		this.numberOfFrames = numberOfFrames;
-		this.frameIndex = 0;
-		this.x = x;
-		this.y = y;
-		this.lane = lane;
-		this.jumping = false;
-		this.currentStep = 0;
-		this.totalSteps = totalSteps;
-	}
-
-	render(ctx) // affiche l'image
-	{
-		ctx.rect(this.x, this.y, this.renderWidth, this.renderHeight);
-		//ctx.stroke();
-		ctx.drawImage(this.img, this.width*this.frameIndex, 0, this.width, this.height, this.x, this.y, this.renderWidth, this.renderHeight);
-	}
-
-	updateSprite() // change l'image du sprite
-	{
-		if (this.frameIndex < this.numberOfFrames - 1) 
-		{
-			this.frameIndex++;
-		}
-		else
-		{
-			this.frameIndex = 0;
-		}
-	}
-
-	moveObstacle(obstaclesSteps, intervalCount)
-	{
-		if (this.currentStep < 10 && intervalCount % 10 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-10');
-		}
-		else if (this.currentStep >= 10 && this.currentStep < 20 && intervalCount % 7 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-20');
-		}
-		else if (this.currentStep >= 20 && this.currentStep < 30 && intervalCount % 4 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-30');
-		}
-		else if (this.currentStep >= 30 && this.currentStep < 40 && intervalCount % 3 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-40');
-		}
-		else if (this.currentStep >= 40 && this.currentStep < 50 && intervalCount % 2 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-50');
-		}
-		else if (this.currentStep >= 50 && this.currentStep < 60 && intervalCount % 2 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-60');
-		}
-		else if (this.currentStep >= 60)
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-100');
-		}
-	}
-
-	moveObstacleAncien(obstaclesSteps, intervalCount)
-	{
-		if (this.currentStep < 10 && intervalCount % 11 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-10');
-		}
-		else if (this.currentStep >= 10 && this.currentStep < 20 && intervalCount % 9 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-20');
-		}
-		else if (this.currentStep >= 20 && this.currentStep < 30 && intervalCount % 7 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-30');
-		}
-		else if (this.currentStep >= 30 && this.currentStep < 40 && intervalCount % 5 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-40');
-		}
-		else if (this.currentStep >= 40 && this.currentStep < 50 && intervalCount % 3 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-50');
-		}
-		else if (this.currentStep >= 50 && this.currentStep < 60 && intervalCount % 2 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-60');
-		}
-		else if (this.currentStep >= 60)
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-100');
-		}
-	}
-
-	updateObstacleFrame(obstaclesSteps) // déplace l'obstacle
-	{
-		if (this.currentStep < this.totalSteps+1) // +1 pour qu'il atteigne bien le bas, sinon il s'arrête 1 étape avant
-		{
-			this.renderWidth = obstaclesSteps[this.currentStep].size;
-			this.renderHeight = obstaclesSteps[this.currentStep].size;
-			
-			if (this.lane == leftLane) 
-			{
-				this.x = obstaclesSteps[this.currentStep].leftLaneX;
-				this.y = obstaclesSteps[this.currentStep].leftLaneY;
-			}
-			else if (this.lane == middleLane) 
-			{
-				this.x = obstaclesSteps[this.currentStep].middleLaneX;
-				this.y = obstaclesSteps[this.currentStep].middleLaneY;
-			}
-			else if (this.lane == rightLane) 
-			{
-				this.x = obstaclesSteps[this.currentStep].rightLaneX;
-				this.y = obstaclesSteps[this.currentStep].rightLaneY;
-			}
-
-			this.currentStep++;
-		}
-	}
-}
-
-
 const canvas = document.getElementById("gameCanvas"); // récupère le canvas sur lequel est affiché le jeu
 const ctx = canvas.getContext('2d');
 const gameContainer = document.getElementById("gameContainer");
+
 const fireImg = document.getElementById('fire');
+const horrorCatImg = document.getElementById('horrorcat');
+const candyImg = document.getElementById('candy');
+const pillImg = document.getElementById('pill');
+const syringeImg = document.getElementById('syringe');
+const waterImg = document.getElementById('water');
 
 canvas.width  = gameContainer.offsetWidth;
 canvas.height = gameContainer.offsetHeight;	
@@ -164,6 +25,9 @@ let currentObstacleCount = 0;	// nombre actuel d'obstacles générés
 let maxObstacleCount = 7;		// nombre maximum d'obstacles présentes en même temps
 let obstacleAppearingChance = 10; // probabilité par défaut de générer un nouvel obstacle (1 sur N), voir fonction newObstacle()
 let framesSinceLastObstacle = 1; // nombre de frames depuis que le dernier obstacle a été généré (pour éviter des obstacles trop rapprochés)
+let minFramesBetweenObstacles = 50;
+
+let bonusAppearingChance = 200;
 
 let score = 0;	// (pas encore utilisé)
 let gameStatus = 1; // statut actuel du jeu, 1 pour en cours, 0 pour game over
@@ -176,7 +40,9 @@ let totalSteps = 50; // nombre total d'étapes pour que l'obstacle parcoure la m
 let obstaclesSteps = []; // tableau d'objets qui stockera toutes les étapes de tous les obstacles
 let obstacles = []; // tableau d'objets qui contiendra tous les obstacles
 
-// let bounceValue = 0.1; // ???
+let allBonus = [];
+let activeBonus = [];
+
 
 
 
@@ -313,6 +179,7 @@ function newObstacle()
 	let newObstacleLane = getRandomInt(laneNumber);
 	let newObstacleX;
 	let newObstacleY;
+	let newObstacle;
 
 	if (newObstacleLane == leftLane) 
 	{
@@ -330,18 +197,35 @@ function newObstacle()
 		newObstacleY = obstaclesSteps[0].rightLaneY;
 	}
 
-	let newObstacle = new Sprite(fireImg, // image
-							  obstaclesSteps[0].size, // renderWidth
-							  obstaclesSteps[0].size, // renderHeight
-							  420, // width
-							  419, // height
-							  4, // numberOfFrames
-							  newObstacleX, // x
-							  newObstacleY, // y
-							  newObstacleLane, // lane
-							  totalSteps); // totalSteps
+	if (getRandomInt(2) == 1) 
+	{
+		newObstacle = new Sprite(fireImg, // image
+						  obstaclesSteps[0].size, // renderWidth
+						  obstaclesSteps[0].size, // renderHeight
+						  308, // width
+						  308, // height
+						  4, // numberOfFrames
+						  newObstacleX, // x
+						  newObstacleY, // y
+						  newObstacleLane, // lane
+						  totalSteps); // totalSteps
+	}
+	else
+	{
+		newObstacle = new Sprite(horrorCatImg, // image
+						  obstaclesSteps[0].size, // renderWidth
+						  obstaclesSteps[0].size, // renderHeight
+						  100, // width
+						  100, // height
+						  8, // numberOfFrames
+						  newObstacleX, // x
+						  newObstacleY, // y
+						  newObstacleLane, // lane
+						  totalSteps); // totalSteps
+	}
 
 	obstacles.push(newObstacle);
+	return newObstacleLane;
 }
 
 function handleNewObstacles()
@@ -350,11 +234,99 @@ function handleNewObstacles()
 	console.log('maxObstacleCount ' + maxObstacleCount);
 	if (currentObstacleCount < maxObstacleCount) 
 	{
-		if ((getRandomInt(obstacleAppearingChance) == 1 || currentObstacleCount <= 1) && framesSinceLastObstacle > 50) 
+		if ((getRandomInt(obstacleAppearingChance) == 1 || currentObstacleCount <= 1) && framesSinceLastObstacle > minFramesBetweenObstacles) 
 		{
 			newObstacle();
 			framesSinceLastObstacle = 0;
+			return true;
 		}
+	}
+	return false;
+}
+
+function createAllBonus()
+{
+	let candy = new Bonus(candyImg, // image
+												obstaclesSteps[0].size, // renderWidth
+												obstaclesSteps[0].size, // renderHeight
+												380, // width
+												380, // height
+												1, // numberOfFrames
+												0, // x
+												0, // y
+												middleLane, // lane
+												totalSteps, // totalSteps
+												50, // bonus points
+												0, // bonus life
+												100); // appearing chance
+
+	let pill = new Bonus(pillImg, // image
+												obstaclesSteps[0].size, // renderWidth
+												obstaclesSteps[0].size, // renderHeight
+												250, // width
+												250, // height
+												1, // numberOfFrames
+												0, // x
+												0, // y
+												middleLane, // lane
+												totalSteps, // totalSteps
+												30, // bonus points
+												0, // bonus life
+												50); // appearing chance
+
+		let syringe = new Bonus(syringeImg, // image
+												obstaclesSteps[0].size, // renderWidth
+												obstaclesSteps[0].size, // renderHeight
+												114, // width
+												114, // height
+												1, // numberOfFrames
+												0, // x
+												0, // y
+												middleLane, // lane
+												totalSteps, // totalSteps
+												30, // bonus points
+												0, // bonus life
+												50); // appearing chance
+
+		let water = new Bonus(waterImg, // image
+												obstaclesSteps[0].size, // renderWidth
+												obstaclesSteps[0].size, // renderHeight
+												400, // width
+												400, // height
+												6, // numberOfFrames
+												0, // x
+												0, // y
+												middleLane, // lane
+												totalSteps, // totalSteps
+												30, // bonus points
+												0, // bonus life
+												50); // appearing chance
+
+	allBonus = [candy, pill, syringe, water];
+}
+
+function handleNewBonus(allBonus)
+{
+	for (let i = 0; i < allBonus.length; i++) 
+	{
+		let currentElement = allBonus[i];
+		
+		if (currentElement.x == 0 && getRandomInt(currentElement.appearingChance) == 1) 
+		{
+			currentElement.addBonus(obstaclesSteps);
+			activeBonus.push(currentElement);
+			return;
+		}
+	}
+}
+
+function handleAllNewElements()
+{
+	let newObstacle = handleNewObstacles();
+
+	if (newObstacle === false && framesSinceLastObstacle > 10 && (minFramesBetweenObstacles - framesSinceLastObstacle) > 5) 
+	{
+		handleNewBonus(allBonus);
 	}
 }
 
@@ -368,7 +340,7 @@ function updateObstacles(obstacles, obstaclesSteps, intervalCount)
 			{
 				clearInterval(intervalId);
 			}
-
+			console.log('size ' + obstacles[i].renderWidth);
 			obstacles.splice(i, 1);
 			i--;
 		}
@@ -387,9 +359,34 @@ function updateObstacles(obstacles, obstaclesSteps, intervalCount)
 	}
 }
 
+function updateActiveBonus(activeBonus, obstaclesSteps)
+{
+	for (let i = 0; i < activeBonus.length; i++) 
+	{	
+		if (activeBonus[i].currentStep == totalSteps+1) 
+		{
+			if (activeBonus[i].lane == playerSprite.lane) 
+			{
+				activeBonus[i].gainBonus(ctx); // remplacer 0 par life
+			}
+			activeBonus.splice(i, 1);
+			i--;
+		}
+		else
+		{
+			activeBonus[i].render(ctx);
+			activeBonus[i].moveObstacle(obstaclesSteps, intervalCount)
+
+			if (intervalCount%10 == 0) 
+			{
+				activeBonus[i].updateSprite();
+			}
+		}
+	}
+}
+
 function drawScore() 
 {
-	score = intervalCount;
     ctx.font = "60px Courier";
     ctx.fillStyle = "#0095DD";
     ctx.fillText("Score: "+score, 15, 90);
@@ -398,6 +395,7 @@ function drawScore()
 
 window.addEventListener('keydown', handleKeyDown);
 setObstaclesSteps();
+createAllBonus();
 
 let playerSprite = new Sprite(document.getElementById('bisou_misa_jaune'), // image
 							  180, // renderWidth, changer aussi le calcul dans x si on le change
@@ -411,16 +409,16 @@ let playerSprite = new Sprite(document.getElementById('bisou_misa_jaune'), // im
 							  0); // totalSteps
 
 
-let obstacleTest = new Sprite(fireImg, // image
-							  obstaclesSteps[0].size, // renderWidth
-							  obstaclesSteps[0].size, // renderHeight
-							  420, // width
-							  419, // height
-							  4, // numberOfFrames
-							  obstaclesSteps[0].leftLaneX, // x
-							  obstaclesSteps[0].leftLaneY, // y
-							  leftLane, // lane
-							  totalSteps); // totalSteps
+// let obstacleTest = new Sprite(fireImg, // image
+// 							  obstaclesSteps[0].size, // renderWidth
+// 							  obstaclesSteps[0].size, // renderHeight
+// 							  308, // width
+// 							  308, // height
+// 							  4, // numberOfFrames
+// 							  obstaclesSteps[0].leftLaneX, // x
+// 							  obstaclesSteps[0].leftLaneY, // y
+// 							  leftLane, // lane
+// 							  totalSteps); // totalSteps
 
 
 let intervalCount = 0;
@@ -435,9 +433,10 @@ let intervalId = setInterval(function() {
 	drawStartingLine();
 	drawLanesLines();
 	drawScore();
-	
+
 	updateObstacles(obstacles, obstaclesSteps, intervalCount);
-	handleNewObstacles();
+	updateActiveBonus(activeBonus, obstaclesSteps);
+	handleAllNewElements();
 
 	//obstacleTest.render(ctx);
 	//obstacleTest.moveObstacle(obstaclesSteps, intervalCount);
@@ -450,8 +449,9 @@ let intervalId = setInterval(function() {
 	if (intervalCount%10==0) 
 	{
 		playerSprite.updateSprite();
+		score++;
+		console.log('score = ' + score);
 	}
-
 }, 10);
 
 /*drawStartingLine();
