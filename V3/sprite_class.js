@@ -17,11 +17,21 @@ class Sprite
 		this.totalSteps = totalSteps;
 	}
 
-	render(ctx) // affiche l'image
+	render(ctx, shadow) // affiche l'image
 	{
 		ctx.rect(this.x, this.y, this.renderWidth, this.renderHeight);
 		//ctx.stroke();
+
+		if (shadow == true) 
+		{
+			// ctx.shadowOffsetY = 50;
+			// ctx.shadowBlur = 20;
+			// ctx.shadowColor = 'rgba(0,0,0,0.6)';
+		}
+
 		ctx.drawImage(this.img, this.width*this.frameIndex, 0, this.width, this.height, this.x, this.y, this.renderWidth, this.renderHeight);
+
+		ctx.shadowColor = 'transparent';
 	}
 
 	updateSprite() // change l'image du sprite
@@ -41,37 +51,37 @@ class Sprite
 		if (this.currentStep < 10 && intervalCount % 10 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-10');
+			//console.log('-10');
 		}
 		else if (this.currentStep >= 10 && this.currentStep < 20 && intervalCount % 7 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-20');
+			//console.log('-20');
 		}
 		else if (this.currentStep >= 20 && this.currentStep < 30 && intervalCount % 4 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-30');
+			//console.log('-30');
 		}
 		else if (this.currentStep >= 30 && this.currentStep < 40 && intervalCount % 3 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-40');
+			//console.log('-40');
 		}
 		else if (this.currentStep >= 40 && this.currentStep < 50 && intervalCount % 2 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-50');
+			//console.log('-50');
 		}
 		else if (this.currentStep >= 50 && this.currentStep < 60 && intervalCount % 2 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-60');
+			//console.log('-60');
 		}
 		else if (this.currentStep >= 60)
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-100');
+			//console.log('-100');
 		}
 	}
 
@@ -151,6 +161,16 @@ class Bonus extends Sprite
 		this.bonusPoints = bonusPoints;
 		this.bonusLife = bonusLife;
 		this.appearingChance = appearingChance;
+		this.renderBonusFrame = 0;
+
+		if (bonusPoints > 0) 
+		{
+			this.bonusText = '+'+bonusPoints+' points';
+		}
+		else if (bonusLife > 0) 
+		{
+			this.bonusText = '+'+bonusLife+' vie';
+		}
 	}
 
 	gainBonus(ctx)
@@ -160,24 +180,22 @@ class Bonus extends Sprite
 			console.log('score = ' + score);
 			score += this.bonusPoints;
 			console.log('score af = ' + score + ' bonus points = ' + this.bonusPoints);
-			this.renderBonus(ctx, '+'+this.bonusPoints+' Points');
+			this.renderBonus(ctx, 1);
 		}
 		else if (this.bonusLife)
 		{
-			lives+=bonusLife;
+			lives += bonusLife;
 
-			this.renderBonus(ctx, '+'+this.bonusLife+' life');
+			this.renderBonus(ctx);
 		}
-
-		this.x = 0;
-		this.y = 0;
 	}
 
-	renderBonus(ctx, text)
-	{
-		ctx.font = "30px Courier";
-		ctx.fillStyle = "green";
-		ctx.fillText(text, this.x, this.y -50);
+	renderBonus(ctx)
+	{	
+		ctx.font = "25px Courier";
+		ctx.fillStyle = "rgba(255,255,255,"+(1 - 0.01*this.renderBonusFrame)+')';
+		ctx.fillText(this.bonusText, this.x, this.y - 30 - (1*this.renderBonusFrame));
+		this.renderBonusFrame++;
 	}
 
 	addBonus(obstaclesSteps)

@@ -39,10 +39,11 @@ let startingLineY = canvas.height/10 * 6; // placée à X/10 en partant du haut,
 let totalSteps = 50; // nombre total d'étapes pour que l'obstacle parcoure la map
 let obstaclesSteps = []; // tableau d'objets qui stockera toutes les étapes de tous les obstacles
 let obstacles = []; // tableau d'objets qui contiendra tous les obstacles
+let elements = [];
 
 let allBonus = [];
 let activeBonus = [];
-
+let collectedBonus = [];
 
 
 
@@ -225,13 +226,14 @@ function newObstacle()
 	}
 
 	obstacles.push(newObstacle);
+	elements.unshift(newObstacle);
 	return newObstacleLane;
 }
 
 function handleNewObstacles()
 {
-	console.log('current count ' + currentObstacleCount);
-	console.log('maxObstacleCount ' + maxObstacleCount);
+	//console.log('current count ' + currentObstacleCount);
+	//console.log('maxObstacleCount ' + maxObstacleCount);
 	if (currentObstacleCount < maxObstacleCount) 
 	{
 		if ((getRandomInt(obstacleAppearingChance) == 1 || currentObstacleCount <= 1) && framesSinceLastObstacle > minFramesBetweenObstacles) 
@@ -315,6 +317,7 @@ function handleNewBonus(allBonus)
 		{
 			currentElement.addBonus(obstaclesSteps);
 			activeBonus.push(currentElement);
+			elements.unshift(currentElement);
 			return;
 		}
 	}
@@ -340,16 +343,16 @@ function updateObstacles(obstacles, obstaclesSteps, intervalCount)
 			{
 				clearInterval(intervalId);
 			}
-			console.log('size ' + obstacles[i].renderWidth);
+			//console.log('size ' + obstacles[i].renderWidth);
 			obstacles.splice(i, 1);
 			i--;
 		}
 		else
 		{
-			obstacles[i].render(ctx);
+			obstacles[i].render(ctx, false);
 			obstacles[i].moveObstacle(obstaclesSteps, intervalCount);
 			
-			if (intervalCount%10 == 0) 
+			if (intervalCount % 10 == 0) 
 			{
 				obstacles[i].updateSprite();
 			}
@@ -368,18 +371,72 @@ function updateActiveBonus(activeBonus, obstaclesSteps)
 			if (activeBonus[i].lane == playerSprite.lane) 
 			{
 				activeBonus[i].gainBonus(ctx); // remplacer 0 par life
+				collectedBonus.push(activeBonus[i]);
+			}
+			else
+			{
+				activeBonus[i].x = 0;
 			}
 			activeBonus.splice(i, 1);
 			i--;
 		}
 		else
 		{
-			activeBonus[i].render(ctx);
+			activeBonus[i].render(ctx, true);
 			activeBonus[i].moveObstacle(obstaclesSteps, intervalCount)
 
-			if (intervalCount%10 == 0) 
+			if (intervalCount % 10 == 0) 
 			{
 				activeBonus[i].updateSprite();
+			}
+		}
+	}
+}
+
+function updateElements(elements, obstaclesSteps, intervalCount)
+{
+	for (var i = 0; i < elements.length; i++) 
+	{
+		if (elements[i].currentStep == totalSteps+1) 
+		{
+			if (elements[i].appearingChance > 0) 
+			{
+				console.log('bonus det');
+				if (elements[i].lane == playerSprite.lane) 
+				{
+					elements[i].gainBonus(ctx); // remplacer 0 par life
+					collectedBonus.push(elements[i]);
+				}
+				else
+				{
+					elements[i].x = 0;
+				}				
+			}
+			else
+			{
+				console.log('abc');
+				if (elements[i].lane == playerSprite.lane) 
+				{
+					clearInterval(intervalId);
+				}
+			}
+			//console.log('size ' + elements[i].renderWidth);
+			elements.splice(i, 1);
+			i--;
+		}
+		else
+		{
+			elements[i].render(ctx, false);
+			elements[i].moveObstacle(obstaclesSteps, intervalCount);
+			
+			if (intervalCount % 10 == 0) 
+			{
+				elements[i].updateSprite();
+			}
+
+			if (!elements[i].appearingChance) 
+			{
+				currentObstacleCount++;
 			}
 		}
 	}
@@ -396,6 +453,7 @@ function drawScore()
 window.addEventListener('keydown', handleKeyDown);
 setObstaclesSteps();
 createAllBonus();
+
 
 let playerSprite = new Sprite(document.getElementById('bisou_misa_jaune'), // image
 							  180, // renderWidth, changer aussi le calcul dans x si on le change
@@ -436,22 +494,35 @@ let intervalId = setInterval(function() {
 
 	updateObstacles(obstacles, obstaclesSteps, intervalCount);
 	updateActiveBonus(activeBonus, obstaclesSteps);
+	updateElements(elements, obstaclesSteps, intervalCount);
 	handleAllNewElements();
-
-	//obstacleTest.render(ctx);
-	//obstacleTest.moveObstacle(obstaclesSteps, intervalCount);
-	//obstacleTest.updateSprite();
 	
-//	console.log('frame : ' + performance.now());
+	playerSprite.render(ctx, false);
 
-	playerSprite.render(ctx);
-
-	if (intervalCount%10==0) 
+	if (intervalCount % 10==0) 
 	{
 		playerSprite.updateSprite();
 		score++;
-		console.log('score = ' + score);
+		//console.log('score = ' + score);
 	}
+	
+	if (collectedBonus.length > 0) 
+	{
+		for (let i = 0; i < collectedBonus.length; i++) 
+		{
+			collectedBonus[i].renderBonus(ctx);	
+
+			if (collectedBonus[i].renderBonusFrame === 50) 
+			{
+				collectedBonus[i].renderBonusFrame = 0;
+				collectedBonus[i].x = 0;
+				collectedBonus.splice(i, 1);
+				i--;
+			}
+		}
+	}
+	//document.body.style.backgroundPositionY = '-'+ intervalCount + 'px';
+	//	console.log('frame : ' + performance.now());
 }, 10);
 
 /*drawStartingLine();
