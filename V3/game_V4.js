@@ -10,7 +10,7 @@ const syringeImg = document.getElementById('syringe');
 const waterImg = document.getElementById('water');
 
 canvas.width  = gameContainer.offsetWidth;
-canvas.height = gameContainer.offsetHeight;	
+canvas.height = gameContainer.offsetHeight;
 
 const laneNumber = 3;	// changer la condition dans getPlayerLocation en cas de modification du nombre de couloirs
 const laneWidth = canvas.width/laneNumber; // établit le nombre de couloirs, leur largeur, la hauteur des lignes, et le nombre de lignes
@@ -31,6 +31,7 @@ let bonusAppearingChance = 200;
 
 let score = 0;	// (pas encore utilisé)
 let gameStatus = 1; // statut actuel du jeu, 1 pour en cours, 0 pour game over
+let lifes = 3;
 
 let startingLineWidth = 10; // largeur de la ligne d'horizon sur laquelle apparaissent les obstacles
 let startingLineX = canvas.width/2 - startingLineWidth/2; // startingLine -> 20 pixels de large ?
@@ -56,12 +57,12 @@ function handleKeyDown(event)
 {
 	if (event.keyCode == 37) // left
 	{
-		if (playerSprite.lane == middleLane) 
+		if (playerSprite.lane == middleLane)
 		{
 			playerSprite.lane = leftLane;
 			playerSprite.x = (laneWidth - playerSprite.renderWidth)/2;
 		}
-		else if (playerSprite.lane == rightLane) 
+		else if (playerSprite.lane == rightLane)
 		{
 			playerSprite.lane = middleLane;
 			playerSprite.x = laneWidth + (laneWidth - playerSprite.renderWidth)/2;
@@ -69,12 +70,12 @@ function handleKeyDown(event)
 	}
 	else if (event.keyCode == 39) // right
 	{
-		if (playerSprite.lane == middleLane) 
+		if (playerSprite.lane == middleLane)
 		{
 			playerSprite.lane = rightLane;
 			playerSprite.x = laneWidth*2 + (laneWidth - playerSprite.renderWidth)/2;
 		}
-		else if (playerSprite.lane == leftLane) 
+		else if (playerSprite.lane == leftLane)
 		{
 			playerSprite.lane = middleLane;
 			playerSprite.x = laneWidth + (laneWidth - playerSprite.renderWidth)/2;
@@ -93,7 +94,7 @@ function drawStartingLine() // dessine la ligne du fond, d'où les obstacles app
 
 function drawLanesLines() // dessine des lignes pour tracer les couloirs
 {
-	for (var i = 0; i < laneNumber+1; i++) 
+	for (var i = 0; i < laneNumber+1; i++)
 	{
 		ctx.beginPath()
 		ctx.moveTo(laneWidth*i, canvas.height);
@@ -108,7 +109,7 @@ function setObstaclesSteps() // alimente un tableau d'objets qui contient toutes
 	let distanceX = startingLineX+startingLineWidth/laneNumber - laneWidth;
 	let distanceY = canvas.height - startingLineY;
 
-	for (var i = 0; i < totalSteps+1; i++) 
+	for (var i = 0; i < totalSteps+1; i++)
 	{
 		let leftX = (startingLineX+startingLineWidth/laneNumber) - (distanceX/totalSteps)*i;
 		let rightX = (startingLineX+startingLineWidth/laneNumber*2) + (distanceX/totalSteps)*i;
@@ -137,13 +138,13 @@ function setObstaclesSteps2() // alimente un tableau d'objets qui contient toute
 	let distanceX = startingLineX+startingLineWidth/laneNumber - laneWidth;
 	let distanceY = canvas.height - startingLineY;
 
-	for (var i = 0; i < totalSteps+1; i++) 
+	for (var i = 0; i < totalSteps+1; i++)
 	{
 		let leftX;
 		let rightX;
 		let y;
 
-		if (i < totalSteps/2) 
+		if (i < totalSteps/2)
 		{
 			leftX = (startingLineX+startingLineWidth/laneNumber) - (distanceX/(totalSteps*2))*i;
 			rightX = (startingLineX+startingLineWidth/laneNumber*2) + (distanceX/(totalSteps*2))*i;
@@ -182,23 +183,23 @@ function newObstacle()
 	let newObstacleY;
 	let newObstacle;
 
-	if (newObstacleLane == leftLane) 
+	if (newObstacleLane == leftLane)
 	{
 		newObstacleX = obstaclesSteps[0].leftLaneX;
 		newObstacleY = obstaclesSteps[0].leftLaneY;
 	}
-	else if (newObstacleLane == middleLane) 
+	else if (newObstacleLane == middleLane)
 	{
 		newObstacleX = obstaclesSteps[0].middleLaneX;
 		newObstacleY = obstaclesSteps[0].middleLaneY;
 	}
-	else if (newObstacleLane == rightLane) 
+	else if (newObstacleLane == rightLane)
 	{
 		newObstacleX = obstaclesSteps[0].rightLaneX;
 		newObstacleY = obstaclesSteps[0].rightLaneY;
 	}
 
-	if (getRandomInt(2) == 1) 
+	if (getRandomInt(2) == 1)
 	{
 		newObstacle = new Sprite(fireImg, // image
 						  obstaclesSteps[0].size, // renderWidth
@@ -234,9 +235,9 @@ function handleNewObstacles()
 {
 	//console.log('current count ' + currentObstacleCount);
 	//console.log('maxObstacleCount ' + maxObstacleCount);
-	if (currentObstacleCount < maxObstacleCount) 
+	if (currentObstacleCount < maxObstacleCount)
 	{
-		if ((getRandomInt(obstacleAppearingChance) == 1 || currentObstacleCount <= 1) && framesSinceLastObstacle > minFramesBetweenObstacles) 
+		if ((getRandomInt(obstacleAppearingChance) == 1 || currentObstacleCount <= 1) && framesSinceLastObstacle > minFramesBetweenObstacles)
 		{
 			newObstacle();
 			framesSinceLastObstacle = 0;
@@ -309,11 +310,11 @@ function createAllBonus()
 
 function handleNewBonus(allBonus)
 {
-	for (let i = 0; i < allBonus.length; i++) 
+	for (let i = 0; i < allBonus.length; i++)
 	{
 		let currentElement = allBonus[i];
-		
-		if (currentElement.x == 0 && getRandomInt(currentElement.appearingChance) == 1) 
+
+		if (currentElement.x == 0 && getRandomInt(currentElement.appearingChance) == 1)
 		{
 			currentElement.addBonus(obstaclesSteps);
 			activeBonus.push(currentElement);
@@ -327,7 +328,7 @@ function handleAllNewElements()
 {
 	let newObstacle = handleNewObstacles();
 
-	if (newObstacle === false && framesSinceLastObstacle > 10 && (minFramesBetweenObstacles - framesSinceLastObstacle) > 5) 
+	if (newObstacle === false && framesSinceLastObstacle > 10 && (minFramesBetweenObstacles - framesSinceLastObstacle) > 5)
 	{
 		handleNewBonus(allBonus);
 	}
@@ -335,11 +336,11 @@ function handleAllNewElements()
 
 function updateObstacles(obstacles, obstaclesSteps, intervalCount)
 {
-	for (var i = 0; i < obstacles.length; i++) 
+	for (var i = 0; i < obstacles.length; i++)
 	{
-		if (obstacles[i].currentStep == totalSteps+1) 
+		if (obstacles[i].currentStep == totalSteps+1)
 		{
-			if (obstacles[i].lane == playerSprite.lane) 
+			if (obstacles[i].lane == playerSprite.lane)
 			{
 				clearInterval(intervalId);
 			}
@@ -351,8 +352,8 @@ function updateObstacles(obstacles, obstaclesSteps, intervalCount)
 		{
 			obstacles[i].render(ctx, false);
 			obstacles[i].moveObstacle(obstaclesSteps, intervalCount);
-			
-			if (intervalCount % 10 == 0) 
+
+			if (intervalCount % 10 == 0)
 			{
 				obstacles[i].updateSprite();
 			}
@@ -364,11 +365,11 @@ function updateObstacles(obstacles, obstaclesSteps, intervalCount)
 
 function updateActiveBonus(activeBonus, obstaclesSteps)
 {
-	for (let i = 0; i < activeBonus.length; i++) 
-	{	
-		if (activeBonus[i].currentStep == totalSteps+1) 
+	for (let i = 0; i < activeBonus.length; i++)
+	{
+		if (activeBonus[i].currentStep == totalSteps+1)
 		{
-			if (activeBonus[i].lane == playerSprite.lane) 
+			if (activeBonus[i].lane == playerSprite.lane)
 			{
 				activeBonus[i].gainBonus(ctx); // remplacer 0 par life
 				collectedBonus.push(activeBonus[i]);
@@ -385,7 +386,7 @@ function updateActiveBonus(activeBonus, obstaclesSteps)
 			activeBonus[i].render(ctx, true);
 			activeBonus[i].moveObstacle(obstaclesSteps, intervalCount)
 
-			if (intervalCount % 10 == 0) 
+			if (intervalCount % 10 == 0)
 			{
 				activeBonus[i].updateSprite();
 			}
@@ -395,14 +396,14 @@ function updateActiveBonus(activeBonus, obstaclesSteps)
 
 function updateElements(elements, obstaclesSteps, intervalCount)
 {
-	for (var i = 0; i < elements.length; i++) 
+	for (var i = 0; i < elements.length; i++)
 	{
-		if (elements[i].currentStep == totalSteps+1) 
+		if (elements[i].currentStep == totalSteps+1)
 		{
-			if (elements[i].appearingChance > 0) 
+			if (elements[i].appearingChance > 0)
 			{
 				console.log('bonus det');
-				if (elements[i].lane == playerSprite.lane) 
+				if (elements[i].lane == playerSprite.lane)
 				{
 					elements[i].gainBonus(ctx); // remplacer 0 par life
 					collectedBonus.push(elements[i]);
@@ -410,14 +411,20 @@ function updateElements(elements, obstaclesSteps, intervalCount)
 				else
 				{
 					elements[i].x = 0;
-				}				
+				}
 			}
 			else
 			{
 				console.log('abc');
-				if (elements[i].lane == playerSprite.lane) 
+				if (elements[i].lane == playerSprite.lane)
 				{
-					clearInterval(intervalId);
+          lifes--;
+          if (lifes === 0) {
+            ctx.fillText("GAME OVER", 115, 400);
+            lifes = 0;
+            clearInterval(intervalId);
+
+          }
 				}
 			}
 			//console.log('size ' + elements[i].renderWidth);
@@ -428,13 +435,13 @@ function updateElements(elements, obstaclesSteps, intervalCount)
 		{
 			elements[i].render(ctx, false);
 			elements[i].moveObstacle(obstaclesSteps, intervalCount);
-			
-			if (intervalCount % 10 == 0) 
+
+			if (intervalCount % 10 == 0)
 			{
 				elements[i].updateSprite();
 			}
 
-			if (!elements[i].appearingChance) 
+			if (!elements[i].appearingChance)
 			{
 				currentObstacleCount++;
 			}
@@ -442,11 +449,16 @@ function updateElements(elements, obstaclesSteps, intervalCount)
 	}
 }
 
-function drawScore() 
-{
-    ctx.font = "60px Courier";
-    ctx.fillStyle = "#0095DD";
-    ctx.fillText("Score: "+score, 15, 90);
+function drawScore() {
+  score = intervalCount;
+  ctx.font = "50px Courier";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText("Score: " + score, 10, 50);
+
+}
+
+function drawLife() {
+  ctx.fillText("x" + lifes, 65, 100);
 }
 
 
@@ -478,6 +490,17 @@ let playerSprite = new Sprite(document.getElementById('bisou_misa_jaune'), // im
 // 							  leftLane, // lane
 // 							  totalSteps); // totalSteps
 
+let lifeSprite = new Sprite(document.getElementById('lifes'), // image
+  50, // renderWidth, changer aussi le calcul dans x si on le change
+  70, // renderHeight
+  65, // width
+  90, // height
+  2, // numberOfFrames
+  12, // x (200 = renderWidth)
+  63, // y
+  middleLane, // lane
+  0); // totalSteps
+
 
 let intervalCount = 0;
 let intervalId = setInterval(function() {
@@ -490,29 +513,31 @@ let intervalId = setInterval(function() {
 
 	drawStartingLine();
 	drawLanesLines();
-	drawScore();
 
 	updateObstacles(obstacles, obstaclesSteps, intervalCount);
 	updateActiveBonus(activeBonus, obstaclesSteps);
 	updateElements(elements, obstaclesSteps, intervalCount);
 	handleAllNewElements();
-	
-	playerSprite.render(ctx, false);
+  drawScore();
+  drawLife();
 
-	if (intervalCount % 10==0) 
+	playerSprite.render(ctx, false);
+  lifeSprite.render(ctx);
+
+	if (intervalCount % 10==0)
 	{
 		playerSprite.updateSprite();
-		score++;
+    	lifeSprite.updateSprite();
 		//console.log('score = ' + score);
 	}
-	
-	if (collectedBonus.length > 0) 
-	{
-		for (let i = 0; i < collectedBonus.length; i++) 
-		{
-			collectedBonus[i].renderBonus(ctx);	
 
-			if (collectedBonus[i].renderBonusFrame === 50) 
+	if (collectedBonus.length > 0)
+	{
+		for (let i = 0; i < collectedBonus.length; i++)
+		{
+			collectedBonus[i].renderBonus(ctx);
+
+			if (collectedBonus[i].renderBonusFrame === 50)
 			{
 				collectedBonus[i].renderBonusFrame = 0;
 				collectedBonus[i].x = 0;
