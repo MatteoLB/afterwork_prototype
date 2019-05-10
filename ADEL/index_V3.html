@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AW V3</title>
+  <style type="text/css">
+  @font-face {
+    font-family: "DS-Digital";
+    src: url("font/DS-Digital.ttf");
+}
+      body
+      {
+        background: url('assets/sky_640x400.png');
+      }
+      #gameCanvas
+      {
+        background: url('assets/rainbowtest2.png');
+        /*background: silver;*/
+      }
+      img
+      {
+        display: none;
+      }
+      #gameContainer
+      {
+        width: 500px;
+        height: 700px;
+        margin:auto;
+        position: fixed;
+        bottom: 2px;
+        left: 0;
+        right: 0;
+      }
+  </style>
+</head>
+<body>
+
+
+<div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<img src="assets/bisou_misa_jaune_2.png" id="bisou_misa_jaune">
+<img src="assets/fire_3.png" id="fire">
+<img src="assets/life.png" id="lifes">
+<img src="assets/horrorcat_3.png" id="horrorcat">
+
+<img src="assets/candy_2.png" id="candy">
+<img src="assets/pill_2.png" id="pill">
+<img src="assets/syringe_2.png" id="syringe">
+<img src="assets/water.png" id="water">
+
+
+
+</body>
+<script src="sprite_class.js"></script>
+<script src="game_V4.js"></script>
+</html>

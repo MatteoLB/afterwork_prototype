@@ -376,7 +376,7 @@ function updateElements(elements, obstaclesSteps, intervalCount) {
             lifeSprite1.height = 90;
             lifes = 1;
           } else if (lifes === 0) {
-            ctx.fillText("GAME OVER", 115, 300);
+            ctx.fillText("GAME OVER", 145, 400);
             lifeSprite1.width = 0;
             lifeSprite1.height = 0;
             lifes = 0;
@@ -403,14 +403,14 @@ function updateElements(elements, obstaclesSteps, intervalCount) {
 }
 
 function drawScore() {
-  ctx.font = "50px Courier";
+  ctx.font = "50px DS-Digital";
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("Score: " + score, 10, 50);
+  ctx.fillText("Score: " + score, 135, 200);
 
 }
 
 function drawLife() {
-  ctx.fillText("x" + lifes, 160, 100);
+  ctx.fillText("x" + lifes, 280, 133);
 }
 
 
@@ -430,7 +430,6 @@ let playerSprite = new Sprite(document.getElementById('bisou_misa_jaune'), // im
   middleLane, // lane
   0); // totalSteps
 
-
 // let obstacleTest = new Sprite(fireImg, // image
 // 							  obstaclesSteps[0].size, // renderWidth
 // 							  obstaclesSteps[0].size, // renderHeight
@@ -448,8 +447,8 @@ let lifeSprite1 = new Sprite(document.getElementById('lifes'), // image
   65, // width
   90, // height
   2, // numberOfFrames
-  10, // x (200 = renderWidth)
-  63, // y
+  130, // x (200 = renderWidth)
+  93, // y
   middleLane, // lane
   0); // totalSteps
 
@@ -459,8 +458,8 @@ let lifeSprite2 = new Sprite(document.getElementById('lifes'), // image
   65, // width
   90, // height
   2, // numberOfFrames
-  60, // x (200 = renderWidth)
-  63, // y
+  180, // x (200 = renderWidth)
+  93, // y
   middleLane, // lane
   0); // totalSteps
 
@@ -470,8 +469,8 @@ let lifeSprite3 = new Sprite(document.getElementById('lifes'), // image
   65, // width
   90, // height
   2, // numberOfFrames
-  110, // x (200 = renderWidth)
-  63, // y
+  230, // x (200 = renderWidth)
+  93, // y
   middleLane, // lane
   0); // totalSteps
 
