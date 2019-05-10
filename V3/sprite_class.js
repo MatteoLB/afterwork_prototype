@@ -15,6 +15,7 @@ class Sprite
 		this.jumping = false;
 		this.currentStep = 0;
 		this.totalSteps = totalSteps;
+		this.collisionText = '-1 vie';
 	}
 
 	render(ctx, shadow) // affiche l'image
@@ -24,9 +25,9 @@ class Sprite
 
 		if (shadow == true) 
 		{
-			// ctx.shadowOffsetY = 50;
-			// ctx.shadowBlur = 20;
-			// ctx.shadowColor = 'rgba(0,0,0,0.6)';
+			/*ctx.shadowOffsetY = 50;*/
+			ctx.shadowBlur = 10;
+			ctx.shadowColor = 'rgba(255,237,137,1)';
 		}
 
 		ctx.drawImage(this.img, this.width*this.frameIndex, 0, this.width, this.height, this.x, this.y, this.renderWidth, this.renderHeight);
@@ -85,40 +86,41 @@ class Sprite
 		}
 	}
 
-	moveObstacleAncien(obstaclesSteps, intervalCount)
+	moveObstacle2(obstaclesSteps, intervalCount)
 	{
-		if (this.currentStep < 10 && intervalCount % 11 == 0) 
+		if (this.currentStep < 10 && intervalCount % 12 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
 			console.log('-10');
 		}
-		else if (this.currentStep >= 10 && this.currentStep < 20 && intervalCount % 9 == 0) 
+		else if (this.currentStep >= 10 && this.currentStep < 20 && intervalCount % 8 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
 			console.log('-20');
 		}
-		else if (this.currentStep >= 20 && this.currentStep < 30 && intervalCount % 7 == 0) 
+		else if (this.currentStep >= 20 && this.currentStep < 30 && intervalCount % 5 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
 			console.log('-30');
 		}
-		else if (this.currentStep >= 30 && this.currentStep < 40 && intervalCount % 5 == 0) 
+		else if (this.currentStep >= 30 && this.currentStep < 40 && intervalCount % 3 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
 			console.log('-40');
 		}
-		else if (this.currentStep >= 40 && this.currentStep < 50 && intervalCount % 3 == 0) 
+		else if (this.currentStep >= 40 && this.currentStep < 50 && intervalCount % 2 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
 			console.log('-50');
 		}
-		else if (this.currentStep >= 50 && this.currentStep < 60 && intervalCount % 2 == 0) 
+		else if (this.currentStep >= 50 && this.currentStep < 70) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
 			console.log('-60');
 		}
-		else if (this.currentStep >= 60)
+		else if (this.currentStep >= 70)
 		{
+			this.updateObstacleFrame(obstaclesSteps);
 			this.updateObstacleFrame(obstaclesSteps);
 			console.log('-100');
 		}
@@ -161,41 +163,55 @@ class Bonus extends Sprite
 		this.bonusPoints = bonusPoints;
 		this.bonusLife = bonusLife;
 		this.appearingChance = appearingChance;
-		this.renderBonusFrame = 0;
+		this.collisionTextFrame = 0;
 
 		if (bonusPoints > 0) 
 		{
-			this.bonusText = '+'+bonusPoints+' points';
+			this.collisionText = '+'+bonusPoints+' points';
 		}
 		else if (bonusLife > 0) 
 		{
-			this.bonusText = '+'+bonusLife+' vie';
+			this.collisionText = '+'+bonusLife+' vie';
 		}
 	}
 
 	gainBonus(ctx)
 	{
-		if (this.bonusPoints > 0) 
+		if (this.bonusPoints > 0)
 		{
 			console.log('score = ' + score);
 			score += this.bonusPoints;
-			console.log('score af = ' + score + ' bonus points = ' + this.bonusPoints);
-			this.renderBonus(ctx, 1);
+			return true;
 		}
-		else if (this.bonusLife)
+		else if (this.bonusLife > 0 && lifes < 3)
 		{
-			lives += bonusLife;
+			lifes += this.bonusLife;
 
-			this.renderBonus(ctx);
+			if (lifes === 3) {
+				lifeSprite3.width = 65;
+				lifeSprite3.height = 90;
+				lifeSprite2.width = 65;
+				lifeSprite2.height = 90;
+				lifeSprite1.width = 65;
+				lifeSprite1.height = 90;
+			} 
+			else if (lifes === 2) {
+				lifeSprite3.width = 0;
+				lifeSprite3.height = 0;
+				lifeSprite2.width = 65;
+				lifeSprite2.height = 90;
+				lifeSprite1.width = 65;
+				lifeSprite1.height = 90;
+			} 
+			else if (lifes === 1) {
+				lifeSprite2.width = 0;
+				lifeSprite2.height = 0;
+				lifeSprite1.width = 65;
+				lifeSprite1.height = 90;
+			}
+			return true;
 		}
-	}
-
-	renderBonus(ctx)
-	{	
-		ctx.font = "25px Courier";
-		ctx.fillStyle = "rgba(255,255,255,"+(1 - 0.01*this.renderBonusFrame)+')';
-		ctx.fillText(this.bonusText, this.x, this.y - 30 - (1*this.renderBonusFrame));
-		this.renderBonusFrame++;
+		return false;
 	}
 
 	addBonus(obstaclesSteps)
@@ -226,5 +242,38 @@ class Bonus extends Sprite
 		this.renderWidth = obstaclesSteps[0].size;
 		this.renderHeight = obstaclesSteps[0].size;
 		this.currentStep = 0;
+	}
+}
+
+
+class CollisionText
+{
+	constructor(text, x, y, type)
+	{
+		this.text = text;
+		this.x = x;
+		this.y = y;
+		this.type = type;
+		this.frameIndex = 0;
+		this.totalFrames = 50;
+	}
+
+	renderText(ctx)
+	{	
+		ctx.font = "30px DS-Digital";
+		/*ctx.shadowBlur = 2;
+		ctx.shadowOffsetY = 2;
+		ctx.shadowOffsetX = 2;
+		ctx.shadowColor = 'rgba(255,255,255,1)';*/
+		ctx.textAlign = "center"; 
+		if (this.type == 0) {
+			ctx.fillStyle = "rgba(255,88,88,"+(1 - 0.01*this.frameIndex)+')';
+		} else if (this.type == 1) {
+			ctx.fillStyle = "rgba(255,255,255,"+(1 - 0.01*this.frameIndex)+')';
+		}
+
+		ctx.fillText(this.text, this.x, this.y - 30 - (1*this.frameIndex));
+		this.frameIndex++;
+		ctx.textAlign = "start"; 
 	}
 }
