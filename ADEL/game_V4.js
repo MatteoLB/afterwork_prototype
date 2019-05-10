@@ -376,11 +376,12 @@ function updateElements(elements, obstaclesSteps, intervalCount) {
             lifeSprite1.height = 90;
             lifes = 1;
           } else if (lifes === 0) {
-            ctx.fillText("GAME OVER", 145, 400);
+            // ctx.fillText("GAME OVER", 145, 400);
             lifeSprite1.width = 0;
             lifeSprite1.height = 0;
             lifes = 0;
-            clearInterval(intervalId);
+            gameOver();
+            // clearInterval(intervalId);
           }
         }
       }
@@ -529,3 +530,40 @@ drawLanesLines();
 playerSprite.render(ctx);
 
 obstacleTest.render(ctx);*/
+
+// close icon in modal
+let closeicon = document.querySelector(".close");
+
+// declare modal
+let modal = document.getElementById("popup1")
+
+// @description congratulations when all cards match, show modal and moves, time and rating
+function gameOver(){
+        clearInterval(intervalId);
+
+        // show game over modal
+        modal.classList.add("show");
+
+        //showing move, rating, time on modal
+        document.getElementById("finalMove").innerHTML = score;
+
+
+        //closeicon on modal
+        closeModal();
+    };
+
+
+
+// @description close icon on modal
+function closeModal(){
+    closeicon.addEventListener("click", function(e){
+        modal.classList.remove("show");
+        startGame();
+    });
+}
+
+// @desciption for user to play Again
+function playAgain(){
+    modal.classList.remove("show");
+    startGame();
+}
