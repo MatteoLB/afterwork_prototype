@@ -1,3 +1,6 @@
+const backgroundLeft = document.getElementById('backgroundLeft');
+const backgroundRight = document.getElementById('backgroundRight');
+
 const canvas = document.getElementById("gameCanvas"); // récupère le canvas sur lequel est affiché le jeu
 const ctx = canvas.getContext('2d');
 const gameContainer = document.getElementById("gameContainer");
@@ -19,6 +22,9 @@ const leftLane = 0;
 const middleLane = 1;
 const rightLane = 2;
 
+let leftKey = 37;
+let rightKey = 39;
+
 let playerCurrentLane = middleLane;
 
 let currentObstacleCount = 0;	// nombre actuel d'obstacles générés
@@ -34,6 +40,10 @@ let lifes = 3;
 let difficultyLevel = 0;
 let difficultyIncreaseRate = 200;
 let difficultyIncreaseSteps = [100, 300, 500, 800, 1200, 1600, 2000, 2500, 3000, 3600, 4400, 5500, 6700, 8000];
+
+let isPillActive = false;
+let pillEffectCount = 0;
+let pillEffectMaxDuration = 1000;
 
 let startingLineWidth = 10; // largeur de la ligne d'horizon sur laquelle apparaissent les obstacles
 let startingLineX = canvas.width/2 - startingLineWidth/2; // startingLine -> 20 pixels de large ?
@@ -57,7 +67,7 @@ function getRandomInt(max) // génère un entier aléatoire entre 0 et max (non 
 
 function handleKeyDown(event)
 {
-	if (event.keyCode == 37) // left
+	if (event.keyCode == leftKey) // left
 	{
 		if (playerSprite.lane == middleLane)
 		{
@@ -70,7 +80,7 @@ function handleKeyDown(event)
 			playerSprite.x = laneWidth + (laneWidth - playerSprite.renderWidth)/2;
 		}
 	}
-	else if (event.keyCode == 39) // right
+	else if (event.keyCode == rightKey) // right
 	{
 		if (playerSprite.lane == middleLane)
 		{
@@ -263,6 +273,7 @@ function createAllBonus()
 												totalSteps, // totalSteps
 												50, // bonus points
 												0, // bonus life
+												0, // speical effect (for pills)
 												60); // appearing chance
 
 	let pill = new Bonus(pillImg, // image
@@ -275,8 +286,9 @@ function createAllBonus()
 												0, // y
 												middleLane, // lane
 												totalSteps, // totalSteps
-												30, // bonus points
+												0, // bonus points
 												0, // bonus life
+												1, // special effect
 												300); // appearing chance
 
 		let syringe = new Bonus(syringeImg, // image
@@ -291,6 +303,7 @@ function createAllBonus()
 												totalSteps, // totalSteps
 												0, // bonus points
 												1, // bonus life
+												0, // special effect (for pills)
 												1000); // appearing chance
 
 		let water = new Bonus(waterImg, // image
@@ -305,6 +318,7 @@ function createAllBonus()
 												totalSteps, // totalSteps
 												30, // bonus points
 												0, // bonus life
+												0, // special effect (for pills)
 												0); // appearing chance
 
 	allBonus = [candy, pill, syringe, water];
@@ -318,10 +332,13 @@ function handleNewBonus(allBonus)
 
 		if (currentElement.x == 0 && getRandomInt(currentElement.appearingChance) == 1)
 		{
-			currentElement.addBonus(obstaclesSteps);
-			activeBonus.push(currentElement);
-			elements.unshift(currentElement);
-			return;
+			if (currentElement.specialEffect == 0 || isPillActive == false) 
+			{
+				currentElement.addBonus(obstaclesSteps);
+				activeBonus.push(currentElement);
+				elements.unshift(currentElement);
+				return;
+			}
 		}
 	}
 }
@@ -507,11 +524,12 @@ function handleDifficulty()
 			intervalId = setInterval(mainGame, 10 - (difficultyLevel-7));
 		}
 	}*/
+
 	ctx.fillText("level " + difficultyLevel, 330, 133);
 	if (score > difficultyIncreaseSteps[difficultyLevel]) 
 	{
 		difficultyLevel++;
-		minFramesBetweenObstacles -= 3;
+		minFramesBetweenObstacles -= 2;
 
 		if (difficultyLevel < 7) 
 		{
@@ -520,7 +538,7 @@ function handleDifficulty()
 		}
 		else if (difficultyLevel == 7) 
 		{
-			minFramesBetweenObstacles -= 15;
+			minFramesBetweenObstacles -= 20;
 			clearInterval(intervalId);
 			intervalId = setInterval(mainGame, 10);
 		}
@@ -615,6 +633,30 @@ function mainGame()
 		updateElements(elements, obstaclesSteps, intervalCount);
 	}
 
+	if (isPillActive) 
+	{
+		score++;
+		pillEffectCount++;
+		
+		updateElements(elements, obstaclesSteps, intervalCount);
+		
+
+		if (pillEffectCount > 20) {
+			updateElements(elements, obstaclesSteps, intervalCount);
+			updateElements(elements, obstaclesSteps, intervalCount);
+		}
+
+		if (pillEffectCount > pillEffectMaxDuration) 
+		{
+			isPillActive = false;
+			pillEffectCount = 0;
+			minFramesBetweenObstacles -= 10;
+
+			leftKey = 37;
+			rightKey = 39;
+		}
+	}
+
 	handleAllNewElements();
   
 	drawScore();
@@ -651,8 +693,10 @@ function mainGame()
 
 	handleDifficulty();
 
-	//document.body.style.backgroundPositionY = '-'+ intervalCount + 'px';
+	//document.body.style.backgroundPositionX = '-'+ intervalCount + 'px, ' + (760+intervalCount) + 'px';
 	//	console.log('frame : ' + performance.now());
+	backgroundLeft.style.backgroundPositionX = '-' + intervalCount + 'px';
+	backgroundRight.style.backgroundPositionX = intervalCount + 'px';
 }
 
 let intervalCount = 0;

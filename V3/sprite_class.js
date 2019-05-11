@@ -86,46 +86,6 @@ class Sprite
 		}
 	}
 
-	moveObstacle2(obstaclesSteps, intervalCount)
-	{
-		if (this.currentStep < 10 && intervalCount % 12 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-10');
-		}
-		else if (this.currentStep >= 10 && this.currentStep < 20 && intervalCount % 8 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-20');
-		}
-		else if (this.currentStep >= 20 && this.currentStep < 30 && intervalCount % 5 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-30');
-		}
-		else if (this.currentStep >= 30 && this.currentStep < 40 && intervalCount % 3 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-40');
-		}
-		else if (this.currentStep >= 40 && this.currentStep < 50 && intervalCount % 2 == 0) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-50');
-		}
-		else if (this.currentStep >= 50 && this.currentStep < 70) 
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-60');
-		}
-		else if (this.currentStep >= 70)
-		{
-			this.updateObstacleFrame(obstaclesSteps);
-			this.updateObstacleFrame(obstaclesSteps);
-			console.log('-100');
-		}
-	}
-
 	updateObstacleFrame(obstaclesSteps) // déplace l'obstacle
 	{
 		if (this.currentStep < this.totalSteps+1) // +1 pour qu'il atteigne bien le bas, sinon il s'arrête 1 étape avant
@@ -157,11 +117,12 @@ class Sprite
 
 class Bonus extends Sprite
 {
-	constructor(img, renderWidth, renderHeight, width, height, numberOfFrames, x, y, lane, totalSteps, bonusPoints, bonusLife, appearingChance)
+	constructor(img, renderWidth, renderHeight, width, height, numberOfFrames, x, y, lane, totalSteps, bonusPoints, bonusLife, specialEffect, appearingChance)
 	{
 		super(img, renderWidth, renderHeight, width, height, numberOfFrames, x, y, lane, totalSteps);
 		this.bonusPoints = bonusPoints;
 		this.bonusLife = bonusLife;
+		this.specialEffect = specialEffect;
 		this.appearingChance = appearingChance;
 		this.collisionTextFrame = 0;
 
@@ -210,6 +171,14 @@ class Bonus extends Sprite
 				lifeSprite1.height = 90;
 			}
 			return true;
+		}
+		else if (this.specialEffect == 1) 
+		{
+			isPillActive = true;
+			minFramesBetweenObstacles += 10;
+
+			leftKey = 39;
+			rightKey = 37;
 		}
 		return false;
 	}

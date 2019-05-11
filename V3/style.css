@@ -5,9 +5,25 @@
 }
 body
 {
-    background: url('assets/sky_640x400.png');
+    
 }
-  #gameCanvas
+#backgroundLeft, #backgroundRight
+{
+	background: url('assets/sky_640x400.png');
+	position: absolute;
+	top: 0px;
+	height: 100%;
+	width: 50%;
+}
+#backgroundLeft
+{
+	left: 0px;
+}
+#backgroundRight
+{
+	right: 0px;
+}
+#gameCanvas
 {
     background: url('assets/rainbowtest2.png');
     /*background: silver;*/
