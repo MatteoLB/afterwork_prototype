@@ -2,88 +2,52 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Afterwork</title>
+  <title>AW V3</title>
+  <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
-<!-- Load the handtrackjs model. -->
-<script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
-<!-- <script src="handtrack.min.js"> </script> -->
+<div id="backgroundLeft"></div>
+<div id="backgroundRight"></div>
 
-<!-- Replace this with your image. Make sure CORS settings allow reading the image! -->
-<canvas id="canvasVideo" class="border" style="position: absolute; top: 10px; left: 10px;"></canvas>
+<canvas id="backgroundCanvas"></canvas>
 
-<video width="360" id="video" style="display: none;">
-</video>
+<div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+</div>
 
+<img src="assets/bisou_misa_jaune_2.png" id="bisou_misa_jaune">
+<img src="assets/life.png" id="lifes">
+<img src="assets/fire_3.png" id="fire">
+<img src="assets/horrorcat_3.png" id="horrorcat">
 
-<canvas width="360" height="510" id="gameCanvas" style="border: 1px solid silver; margin: auto; display: block;"></canvas>
+<img src="assets/candy_2.png" id="candy">
+<img src="assets/pill_2.png" id="pill">
+<img src="assets/syringe_2.png" id="syringe">
+<img src="assets/water.png" id="water">
 
+<div id="popup1" class="overlay">
+    <div class="popup">
+      <h2>GAME OVER</h2>
+      <a class="close" href=#>×</a>
+      <div class="content-1">
+        <p>Your score: <span id=finalMove> </span> points </p>
+      </div>
+      <form class="content-2">
+        <label>Your name: </label>
+          <input></input>
+          <br>
+          <br>
+          <button id="play-again" onclick="playAgain()">
+            Play again 😄</a>
+          </button>
+      </form>
+    </div>
+</div>
 
-<!-- Place your code in the script tag below. You can also use an external .js file -->
-
-<script src="game.js"></script>
-<script>
-// Notice there is no 'import' statement. 'handTrack' and 'tf' is
-// available on the index-page because of the script tag above.
-
-const canvasVideo = document.getElementById('canvasVideo');
-const ctxVideo = canvasVideo.getContext('2d');
-/*const video = document.getElementById('video');*/
-
-let intervalId;
-
-const modelParams = {
-    flipHorizontal: true,   // flip e.g for video 
-    imageScaleFactor: 0.7,  // reduce input image size for (maybe) gains in speed.
-    maxNumBoxes: 1,        // maximum number of boxes to detect
-    iouThreshold: 0.5,      // ioU threshold for non-max suppression
-    scoreThreshold: 0.79,    // confidence threshold for predictions.
-}
-      
-  
-console.log('bf start video : ' + performance.now());
-
-handTrack.startVideo(video).then(function (status) // lance la vidéo
-{ 
-    console.log('af start video : ' + performance.now());
-    if (status) 
-    { 
-        handTrack.load(modelParams).then(model => 
-        { 
-            console.log('af load : ' + performance.now());
-            intervalId = setInterval(function() { // récupère la frame actuelle de la vidéo, détecte la main et exécute la fonction du jeu
-                model.detect(video).then(preds => 
-                { 
-                    console.log('af detect : ' + performance.now());
-                    model.renderPredictions(preds, canvasVideo, ctxVideo, video); // affiche le rendu de la vidéo avec le carré bleu autour de la main
-
-                    console.log('af render : ' + performance.now());
-                    if (preds.length) // si il y a une main, exécute une frame du jeu
-                    {
-                        let status = mainGame(preds[0].bbox); // fonction du jeu, renvoie l'état du jeu (0 pour game over, 1 pour jeu en cours)
-
-                        if (!status) // si game over, met fin à l'intervalle (termine le jeu & la détection)
-                        {
-                            clearInterval(intervalId);
-
-                            gameOver(); // affiche game over
-                        }
-                    } 
-                    console.log('af game : ' + performance.now());
-                });
-            }, 100); 
-            
-        });
-    } 
-    else 
-    {
-        console.log("Please enable video");
-    }
-})
-
-
-
-</script>
 </body>
+<script src="sprite_class.js"></script>
+<script src="game_V4.js"></script>
+<script src="background.js"></script>
 </html>
