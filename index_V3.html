@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AW V3</title>
+  <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<div id="backgroundLeft"></div>
+<div id="backgroundRight"></div>
+
+<canvas id="backgroundCanvas"></canvas>
+
+<div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<img src="assets/bisou_misa_jaune_2.png" id="bisou_misa_jaune">
+<img src="assets/life.png" id="lifes">
+<img src="assets/fire_3.png" id="fire">
+<img src="assets/horrorcat_3.png" id="horrorcat">
+
+<img src="assets/candy_2.png" id="candy">
+<img src="assets/pill_2.png" id="pill">
+<img src="assets/syringe_2.png" id="syringe">
+<img src="assets/water.png" id="water">
+
+<div id="popup1" class="overlay">
+    <div class="popup">
+      <h2>GAME OVER</h2>
+      <a class="close" href=#>×</a>
+      <div class="content-1">
+        <p>Your score: <span id=finalMove> </span> points </p>
+      </div>
+      <form class="content-2">
+        <label>Your name: </label>
+          <input></input>
+          <br>
+          <br>
+          <button id="play-again" onclick="playAgain()">
+            Play again 😄</a>
+          </button>
+      </form>
+    </div>
+</div>
+
+</body>
+<script src="sprite_class.js"></script>
+<script src="game_V4.js"></script>
+<script src="background.js"></script>
+</html>
