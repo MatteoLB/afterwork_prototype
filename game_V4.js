@@ -376,7 +376,7 @@ function updateElements(elements, obstaclesSteps, intervalCount)
 								lifeSprite1.width = 0;
 								lifeSprite1.height = 0;
 								lifes = 0;
-								//gameOver();							
+								gameOver();							
 						}
 				} // if (elements[i].lane == playerSprite.lane)
 			}
