@@ -181,4 +181,6 @@ for (var i = 0; i < 60; i++) // disperse les étoiles, sinon beaucoup d'entre el
 	updateBackgroundStars(backgroundStars);
 }
 
-let intervalId = setInterval(mainGame, 10);
+let intervalId = setInterval(mainGame, baseInterval);
+
+//requestAnimationFrame(mainGame)

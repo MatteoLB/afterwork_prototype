@@ -12,6 +12,8 @@ const pillImg = document.getElementById('pill');
 const syringeImg = document.getElementById('syringe');
 const waterImg = document.getElementById('water');
 
+const bonusListContent = document.getElementById('bonusListContent');
+
 canvas.width  = gameContainer.offsetWidth;
 canvas.height = gameContainer.offsetHeight;
 
@@ -29,9 +31,9 @@ let playerCurrentLane = middleLane;
 
 let currentObstacleCount = 0;	// nombre actuel d'obstacles générés
 let maxObstacleCount = 7;		// nombre maximum d'obstacles présentes en même temps
-let obstacleAppearingChance = 10; // probabilité par défaut de générer un nouvel obstacle (1 sur N), voir fonction newObstacle()
+let obstacleAppearingChance = 120; // probabilité par défaut de générer un nouvel obstacle (1 sur N), voir fonction newObstacle()
 let framesSinceLastObstacle = 1; // nombre de frames depuis que le dernier obstacle a été généré (pour éviter des obstacles trop rapprochés)
-let minFramesBetweenObstacles = 80;
+let minFramesBetweenObstacles = 60;
 
 
 let score = 0;	
@@ -39,11 +41,11 @@ let gameStatus = 1; // statut actuel du jeu, 1 pour en cours, 0 pour game over
 let lifes = 3;
 let difficultyLevel = 0;
 let difficultyIncreaseRate = 200;
-let difficultyIncreaseSteps = [100, 300, 500, 800, 1200, 1600, 2000, 2500, 3000, 3600, 4400, 5500, 6700, 8000];
+let difficultyIncreaseSteps = [50, 100, 150, 200, 270, 350, 450, 600, 900, 1400, 2000, 2800, 4500, 6500];
 
 let isPillActive = false;
 let pillEffectCount = 0;
-let pillEffectMaxDuration = 1000;
+let pillEffectMaxDuration = 800;
 
 let startingLineWidth = 10; // largeur de la ligne d'horizon sur laquelle apparaissent les obstacles
 let startingLineX = canvas.width/2 - startingLineWidth/2; // startingLine -> 20 pixels de large ?
@@ -93,6 +95,17 @@ function handleKeyDown(event)
 			playerSprite.x = laneWidth + (laneWidth - playerSprite.renderWidth)/2;
 		}
 	}
+	else if (event.keyCode == 72)
+	{
+		if (bonusListContent.hidden == true) 
+		{
+			bonusListContent.hidden = false;
+		}
+		else
+		{
+			bonusListContent.hidden = true;
+		}
+	}
 }
 
 function drawStartingLine() // dessine la ligne du fond, d'où les obstacles apparaissent
@@ -126,49 +139,6 @@ function setObstaclesSteps() // alimente un tableau d'objets qui contient toutes
 		let leftX = (startingLineX+startingLineWidth/laneNumber) - (distanceX/totalSteps)*i;
 		let rightX = (startingLineX+startingLineWidth/laneNumber*2) + (distanceX/totalSteps)*i;
 		let y = startingLineY + (distanceY/totalSteps)*i;
-
-		let size = Math.abs(leftX - rightX);
-
-		obstaclesSteps.push({
-			leftLaneX: leftX - size,
-			leftLaneY: y - size,
-			middleLaneX: leftX,
-			middleLaneY: y - size,
-			rightLaneX: rightX,
-			rightLaneY: y - size,
-			size: size
-		});
-
-		ctx.rect(leftX, y, 1, 1);
-		ctx.fillStyle = 'red';
-		ctx.fill();
-	}
-}
-
-function setObstaclesSteps2() // alimente un tableau d'objets qui contient toutes les coordonnées et la taille qu'auront les obstacles
-{
-	let distanceX = startingLineX+startingLineWidth/laneNumber - laneWidth;
-	let distanceY = canvas.height - startingLineY;
-
-	for (var i = 0; i < totalSteps+1; i++)
-	{
-		let leftX;
-		let rightX;
-		let y;
-
-		if (i < totalSteps/2)
-		{
-			leftX = (startingLineX+startingLineWidth/laneNumber) - (distanceX/(totalSteps*2))*i;
-			rightX = (startingLineX+startingLineWidth/laneNumber*2) + (distanceX/(totalSteps*2))*i;
-			y = startingLineY + (distanceY/(totalSteps*2))*i;
-		}
-		else
-		{
-			leftX = (startingLineX+startingLineWidth/laneNumber) - (distanceX/(totalSteps/2))*i;
-			rightX = (startingLineX+startingLineWidth/laneNumber*2) + (distanceX/(totalSteps/2))*i;
-			y = startingLineY + (distanceY/(totalSteps/2))*i;
-		}
-
 
 		let size = Math.abs(leftX - rightX);
 
@@ -321,7 +291,7 @@ function createAllBonus()
 												0, // special effect (for pills)
 												0); // appearing chance
 
-	allBonus = [candy, pill, syringe, water];
+	allBonus = [candy, pill, syringe]; // + water ?
 }
 
 function handleNewBonus(allBonus)
@@ -347,69 +317,9 @@ function handleAllNewElements()
 {
 	let newObstacle = handleNewObstacles();
 
-	if (newObstacle === false && framesSinceLastObstacle > 10 && (minFramesBetweenObstacles - framesSinceLastObstacle) > 5)
+	if (newObstacle === false && framesSinceLastObstacle > 10 /*&& (minFramesBetweenObstacles - framesSinceLastObstacle) > 5*/)
 	{
 		handleNewBonus(allBonus);
-	}
-}
-
-function updateObstacles(obstacles, obstaclesSteps, intervalCount)
-{
-	for (var i = 0; i < obstacles.length; i++)
-	{
-		if (obstacles[i].currentStep == totalSteps+1)
-		{
-			if (obstacles[i].lane == playerSprite.lane)
-			{
-				clearInterval(intervalId);
-			}
-			//console.log('size ' + obstacles[i].renderWidth);
-			obstacles.splice(i, 1);
-			i--;
-		}
-		else
-		{
-			obstacles[i].render(ctx, false);
-			obstacles[i].moveObstacle(obstaclesSteps, intervalCount);
-
-			if (intervalCount % 10 == 0)
-			{
-				obstacles[i].updateSprite();
-			}
-
-			currentObstacleCount++;
-		}
-	}
-}
-
-function updateActiveBonus(activeBonus, obstaclesSteps)
-{
-	for (let i = 0; i < activeBonus.length; i++)
-	{
-		if (activeBonus[i].currentStep == totalSteps+1)
-		{
-			if (activeBonus[i].lane == playerSprite.lane)
-			{
-				activeBonus[i].gainBonus(ctx); // remplacer 0 par life
-				collisionText.push(activeBonus[i]);
-			}
-			else
-			{
-				activeBonus[i].x = 0;
-			}
-			activeBonus.splice(i, 1);
-			i--;
-		}
-		else
-		{
-			activeBonus[i].render(ctx, true);
-			activeBonus[i].moveObstacle(obstaclesSteps, intervalCount)
-
-			if (intervalCount % 10 == 0)
-			{
-				activeBonus[i].updateSprite();
-			}
-		}
 	}
 }
 
@@ -462,16 +372,14 @@ function updateElements(elements, obstaclesSteps, intervalCount)
 						{
 								ctx.fillStyle = 'white';
 								ctx.font = "50px DS-Digital";
-								//ctx.fillText("GAME OVER", 115, 300);
+								
 								lifeSprite1.width = 0;
 								lifeSprite1.height = 0;
 								lifes = 0;
-								gameOver();
-								//clearInterval(intervalId);
+								//gameOver();							
 						}
 				} // if (elements[i].lane == playerSprite.lane)
 			}
-			//console.log('size ' + elements[i].renderWidth);
 			elements.splice(i, 1);
 			i--;
 		} // fin if (elements[i].currentStep == totalSteps+1)
@@ -503,49 +411,29 @@ function updateElements(elements, obstaclesSteps, intervalCount)
 
 function handleDifficulty()
 {
-	/*if (score > difficultyIncreaseRate * difficultyLevel && difficultyLevel < Math.floor(score / difficultyIncreaseRate)) 
-	{
-		difficultyLevel++;
-		minFramesBetweenObstacles -= 5;
-
-		if (difficultyLevel < 7) 
-		{
-			clearInterval(intervalId);
-			intervalId = setInterval(mainGame, 10 - (difficultyLevel-1));
-		}
-		else if (difficultyLevel == 7) 
-		{
-			clearInterval(intervalId);
-			intervalId = setInterval(mainGame, 10);
-		}
-		else if (difficultyLevel-7 > 1)
-		{
-			clearInterval(intervalId);
-			intervalId = setInterval(mainGame, 10 - (difficultyLevel-7));
-		}
-	}*/
-
 	ctx.fillText("level " + difficultyLevel, 330, 133);
-	if (score > difficultyIncreaseSteps[difficultyLevel]) 
+
+
+	if (intervalCount/6 > difficultyIncreaseSteps[difficultyLevel]) 
 	{
 		difficultyLevel++;
-		minFramesBetweenObstacles -= 2;
 
-		if (difficultyLevel < 7) 
+		if (minFramesBetweenObstacles > 20) 
 		{
-			clearInterval(intervalId);
-			intervalId = setInterval(mainGame, 10 - (difficultyLevel-1));
+			minFramesBetweenObstacles -= 5;
 		}
-		else if (difficultyLevel == 7) 
+
+		if (baseInterval - difficultyLevel > 0) 
 		{
-			minFramesBetweenObstacles -= 20;
+			for (var i = 0; i < allBonus.length; i++) 
+			{
+				allBonus[i].appearingChance += difficultyLevel*5;
+			}
+
+			pillEffectMaxDuration -= 20;
+
 			clearInterval(intervalId);
-			intervalId = setInterval(mainGame, 10);
-		}
-		else if (difficultyLevel-7 > 1)
-		{
-			clearInterval(intervalId);
-			intervalId = setInterval(mainGame, 10 - (difficultyLevel-7));
+			intervalId = setInterval(mainGame, baseInterval - difficultyLevel);
 		}
 	}
 }
@@ -558,16 +446,11 @@ function handlePillBonus()
 	updateElements(elements, obstaclesSteps, intervalCount);
 		
 
-	if (pillEffectCount > 20) 
-	{
-		updateElements(elements, obstaclesSteps, intervalCount);
-	}
-
 	if (pillEffectCount > pillEffectMaxDuration) 
 	{
 		isPillActive = false;
 		pillEffectCount = 0;
-		minFramesBetweenObstacles -= 10;
+		minFramesBetweenObstacles -= 30;
 
 		leftKey = 37;
 		rightKey = 39;
@@ -584,6 +467,10 @@ function drawScore() {
 function drawLife() {
   ctx.fillText("x" + lifes, 280, 133);
 }
+
+
+
+// ****************************************************************************************************************************************************
 
 
 window.addEventListener('keydown', handleKeyDown);
@@ -651,11 +538,6 @@ function mainGame()
 
 	updateElements(elements, obstaclesSteps, intervalCount);
 
-	
-	if (difficultyLevel > 6) 
-	{
-		updateElements(elements, obstaclesSteps, intervalCount);
-	}
 
 	if (isPillActive) 
 	{
@@ -673,7 +555,7 @@ function mainGame()
   	lifeSprite2.render(ctx);
   	lifeSprite3.render(ctx);
 
-	if (intervalCount % 10==0)
+	if (intervalCount % 6 == 0)
 	{
 		score++;
 		playerSprite.updateSprite();
@@ -683,7 +565,6 @@ function mainGame()
 		//console.log('score = ' + score);
 
 		updateBackgroundStars(backgroundStars);
-
 	}
 
 	if (collisionText.length > 0)
@@ -701,13 +582,14 @@ function mainGame()
 	}
 
 	handleDifficulty();
-
+	//requestAnimationFrame(mainGame);
 	//console.log('frame : ' + performance.now());
 	//backgroundLeft.style.backgroundPositionX = '-' + intervalCount + 'px';
 	//backgroundRight.style.backgroundPositionX = intervalCount + 'px';
 }
 
 let intervalCount = 0;
+let baseInterval = 15;
 //let intervalId = setInterval(mainGame, 10); // lancé dans background.js
 
 
@@ -752,4 +634,40 @@ function closeModal(){
 function playAgain(){
     modal.classList.remove("show");
     startGame();
+}
+
+function startGame()
+{
+	intervalCount = 0;
+	score = 0;
+
+	leftKey = 37;
+	rightKey = 39;
+
+	playerCurrentLane = middleLane;
+
+	currentObstacleCount = 0;	// nombre actuel d'obstacles générés
+	maxObstacleCount = 7;		// nombre maximum d'obstacles présentes en même temps
+	obstacleAppearingChance = 10; // probabilité par défaut de générer un nouvel obstacle (1 sur N), voir fonction newObstacle()
+	framesSinceLastObstacle = 1; // nombre de frames depuis que le dernier obstacle a été généré (pour éviter des obstacles trop rapprochés)
+	minFramesBetweenObstacles = 80;
+
+	lifes = 3;
+	difficultyLevel = 0;	
+
+	isPillActive = false;
+	pillEffectCount = 0;
+
+	lifeSprite1.width = 65;
+	lifeSprite1.height = 90;
+	lifeSprite2.width = 65;
+	lifeSprite2.height = 90;
+	lifeSprite3.width = 65;
+	lifeSprite3.height = 90;
+
+	obstacles = [];
+	activeBonus = [];
+	elements = [];
+
+	intervalId = setInterval(mainGame, 10);
 }

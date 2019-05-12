@@ -49,40 +49,33 @@ class Sprite
 
 	moveObstacle(obstaclesSteps, intervalCount)
 	{
-		if (this.currentStep < 10 && intervalCount % 10 == 0) 
+		if (this.currentStep < 5 && intervalCount % 10 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			//console.log('-10');
 		}
-		else if (this.currentStep >= 10 && this.currentStep < 20 && intervalCount % 7 == 0) 
+		else if (this.currentStep >= 5 && this.currentStep < 10 && intervalCount % 7 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			//console.log('-20');
 		}
-		else if (this.currentStep >= 20 && this.currentStep < 30 && intervalCount % 4 == 0) 
+		else if (this.currentStep >= 10 && this.currentStep < 15 && intervalCount % 4 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			//console.log('-30');
 		}
-		else if (this.currentStep >= 30 && this.currentStep < 40 && intervalCount % 3 == 0) 
+		else if (this.currentStep >= 15 && this.currentStep < 20 && intervalCount % 3 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			//console.log('-40');
 		}
-		else if (this.currentStep >= 40 && this.currentStep < 50 && intervalCount % 2 == 0) 
+		else if (this.currentStep >= 20 && this.currentStep < 25 && intervalCount % 2 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			//console.log('-50');
 		}
-		else if (this.currentStep >= 50 && this.currentStep < 60 && intervalCount % 2 == 0) 
+		else if (this.currentStep >= 25 && this.currentStep < 30 && intervalCount % 2 == 0) 
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			//console.log('-60');
 		}
-		else if (this.currentStep >= 60)
+		else if (this.currentStep >= 30)
 		{
 			this.updateObstacleFrame(obstaclesSteps);
-			//console.log('-100');
 		}
 	}
 
@@ -175,7 +168,7 @@ class Bonus extends Sprite
 		else if (this.specialEffect == 1) 
 		{
 			isPillActive = true;
-			minFramesBetweenObstacles += 10;
+			minFramesBetweenObstacles += 30;
 
 			leftKey = 39;
 			rightKey = 37;

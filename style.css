@@ -50,7 +50,51 @@ img
     right: 0;
 }
 
-/*
+
+
+/* ***********************************************************************************************************************************************
+ * Liste des bonus
+*/
+#bonusList
+{
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	color: #ffffff70;
+	font-family: "DS-Digital";
+}
+
+#bonusListContent
+{
+	margin-top: 10px;
+	background: #5b5b5b2b;
+    border: 1px solid #50505099;
+    padding: 0px 12px;
+}
+
+#bonusList h3
+{
+	margin-top: 0px;
+	margin-bottom: 0px;
+	text-align: center;
+}
+
+#bonusList img
+{
+	display: inline-block;
+	height: 30px;
+	margin-right: 10px;
+}
+
+.bonusListItem
+{
+	display: flex;
+	align-items: center;
+}
+
+
+
+/* ***********************************************************************************************************************************************
  * Styles for congratulations modal
 */
 
