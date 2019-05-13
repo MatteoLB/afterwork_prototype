@@ -1,7 +1,7 @@
 @font-face 
 {
     font-family: "DS-Digital";
-    src: url("../afterwork_prototype/DS-DIGI.ttf") format('truetype');
+    src: url("./font/DS-DIGI.TTF") format('truetype');
 }
 body
 {
