@@ -15,9 +15,9 @@ let vanishingPointY = startingLineY + canvas.offsetTop + 15;
 let starsNumber = 300;
 let backgroundStars = [];
 
-ctxBG.rect(vanishingPointX, vanishingPointY, 1, 1)
+/*ctxBG.rect(vanishingPointX, vanishingPointY, , 1)
 ctxBG.fillStyle = 'red';
-ctxBG.fill();
+ctxBG.fill();*/
 
 class Star
 {
@@ -180,6 +180,9 @@ for (var i = 0; i < 60; i++) // disperse les étoiles, sinon beaucoup d'entre el
 {
 	updateBackgroundStars(backgroundStars);
 }
+
+
+
 
 let intervalId = setInterval(mainGame, baseInterval);
 

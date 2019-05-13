@@ -168,10 +168,6 @@ function setObstaclesSteps() // alimente un tableau d'objets qui contient toutes
 			rightLaneY: y - size,
 			size: size
 		});
-
-		ctx.rect(leftX, y, 1, 1);
-		ctx.fillStyle = 'red';
-		ctx.fill();
 	}
 }
 
