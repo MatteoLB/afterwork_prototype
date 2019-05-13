@@ -53,16 +53,25 @@
     </div>
 </div>
 
+<div id="rankings">
+    <h3>Appuyez sur C pour afficher/masquer le classement</h3>
+</div>
+
+<div id="rankingsContent" hidden>
+        
+</div>
+
 <div id="popup1" class="overlay">
     <div class="popup">
       <h2>GAME OVER</h2>
       <a class="close" href=#>×</a>
       <div class="content-1">
-        <p>Your score: <span id=finalMove> </span> points </p>
+        <p>Your score: <strong id=finalMove> </strong> points</p>
       </div>
       <form class="content-2">
         <label>Your name: </label>
-          <input></input>
+          <input type="text" id="playerName"></input>
+          <button id="sendRanking">Send</button>
           <br>
           <br>
           <button id="play-again" onclick="playAgain()">

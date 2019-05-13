@@ -2,6 +2,13 @@
 {
     font-family: "DS-Digital";
     src: url("./font/DS-DIGI.TTF") format('truetype');
+    font-weight: normal;
+}
+@font-face 
+{
+    font-family: "DS-Digital";
+    src: url("./font/DS-DIGIB.TTF") format('truetype');
+    font-weight: bold;
 }
 body
 {
@@ -55,16 +62,31 @@ img
 /* ***********************************************************************************************************************************************
  * Liste des bonus
 */
-#bonusList
+#bonusList, #rankings, #rankingsContent
 {
+	z-index: 100;
 	position: absolute;
-	right: 10px;
 	top: 10px;
 	color: #ffffff70;
 	font-family: "DS-Digital";
 }
 
-#bonusListContent
+#bonusList
+{
+	right: 10px;
+}
+#rankings
+{
+	left: 10px;
+}
+
+#rankingsContent
+{
+	top: 30px;
+	left: 10px;
+}
+
+#bonusListContent, #rankingsContent
 {
 	margin-top: 10px;
 	background: #5b5b5b2b;
@@ -72,7 +94,7 @@ img
     padding: 0px 12px;
 }
 
-#bonusList h3
+#bonusList h3, #rankings h3
 {
 	margin-top: 0px;
 	margin-bottom: 0px;
@@ -90,6 +112,27 @@ img
 {
 	display: flex;
 	align-items: center;
+}
+
+.rankerItem
+{
+	display: flex;
+	text-align: center;
+	justify-content: space-between;
+}
+
+.rankerItem p
+{
+	padding: 0px 12px;
+	font-size: 1.2rem;
+}
+.rankerItem p:first-child
+{
+	color: white;
+}
+.rankerItem p:last-child
+{
+	color: green;
 }
 
 
@@ -129,8 +172,10 @@ img
 .popup h2 {
   text-align: center;
   color: red;
+  font-weight: bold;
   font-family: 'DS-Digital', Tahoma, Arial, sans-serif;
-  font-size: 3rem;
+  font-size: 3.5rem;
+  margin-bottom: 30px;
 }
 
 .popup .close {
@@ -153,6 +198,7 @@ img
   max-height: 30%;
   overflow: auto;
   text-align: center;
+  font-size: 1.1rem;
 }
 
 .show {
@@ -162,6 +208,20 @@ img
 
 #starRating li {
   display: inline-block;
+}
+
+#playerName, #sendRanking
+{
+	font-size: 1.1rem;
+}
+
+#sendRanking
+{
+	background-color: #141214;
+	font-family: 'DS-Digital';
+	color: white;
+	border-radius: 3px;
+	padding: 3px 12px;
 }
 
 #play-again {

@@ -13,6 +13,10 @@ const syringeImg = document.getElementById('syringe');
 const waterImg = document.getElementById('water');
 
 const bonusListContent = document.getElementById('bonusListContent');
+const rankingsContent = document.getElementById('rankingsContent');
+const playerName = document.getElementById('playerName');
+const sendRanking = document.getElementById('sendRanking');
+
 
 canvas.width  = gameContainer.offsetWidth;
 canvas.height = gameContainer.offsetHeight;
@@ -60,6 +64,8 @@ let allBonus = [];
 let activeBonus = [];
 let collisionText = [];
 
+let ranking = [];
+
 
 
 function getRandomInt(max) // génère un entier aléatoire entre 0 et max (non inclus)
@@ -104,6 +110,17 @@ function handleKeyDown(event)
 		else
 		{
 			bonusListContent.hidden = true;
+		}
+	}
+	else if (event.keyCode == 67) 
+	{
+		if (rankingsContent.hidden == true) 
+		{
+			rankingsContent.hidden = false;
+		}
+		else
+		{
+			rankingsContent.hidden = true;
 		}
 	}
 }
@@ -468,62 +485,92 @@ function drawLife() {
   ctx.fillText("x" + lifes, 280, 133);
 }
 
+function updateRanking(e)
+{
+	e.preventDefault();
+	sendRanking.disabled = true;
 
+	if (localStorage.getItem('ranking') && playerName.value != '' && playerName.value != null) 
+	{
+		let name = playerName.value;
+		ranking = JSON.parse(localStorage.getItem('ranking'));
 
-// ****************************************************************************************************************************************************
+		ranking.push({name: name, score: score});
 
+		localStorage.setItem('ranking', JSON.stringify(ranking));
+	}
+	else if (playerName.value != '' && playerName.value != null)
+	{
+		let name = playerName.value;
+		ranking.push({name: name, score: score});
+		localStorage.setItem('ranking', JSON.stringify(ranking));
+	}
 
-window.addEventListener('keydown', handleKeyDown);
-setObstaclesSteps();
-createAllBonus();
+	if (localStorage.getItem('ranking')) 
+	{
+		ranking = JSON.parse(localStorage.getItem('ranking'));
 
+		displayRanking(ranking);
+	}
+}
 
-let playerSprite = new Sprite(document.getElementById('bisou_misa_jaune'), // image
-							  180, // renderWidth, changer aussi le calcul dans x si on le change
-							  110, // renderHeight
-							  299, // width
-							  188, // height
-							  4, // numberOfFrames
-							  laneWidth + (laneWidth - 180)/2, // x (200 = renderWidth)
-							  canvas.height-110, // y
-							  middleLane, // lane
-							  0); // totalSteps
+function orderRankings(ranking)
+{
+	let returnArray = [];
 
+	ranking.sort(function(a, b) {
+	    return parseFloat(a.score) - parseFloat(b.score);
+	});
+}
 
+function displayRanking(ranking)
+{
+	let rankerItem;
+	let rankerRank;
+	let rankerName;
+	let rankerScore;
+	let orderedRankings = ranking;
+	let rank = 0;
 
-let lifeSprite1 = new Sprite(document.getElementById('lifes'), // image
-  50, // renderWidth, changer aussi le calcul dans x si on le change
-  70, // renderHeight
-  65, // width
-  90, // height
-  2, // numberOfFrames
-  130, // x (200 = renderWidth)
-  93, // y
-  middleLane, // lane
-  0); // totalSteps
+	if (ranking.length > 1) 
+	{
+		orderedRankings.sort(function(a, b) {
+		    return parseFloat(a.score) - parseFloat(b.score);
+		});
+	}
+	
+	
+	while(rankingsContent.firstChild)
+	{
+		rankingsContent.removeChild(rankingsContent.firstChild);
+	}
 
-let lifeSprite2 = new Sprite(document.getElementById('lifes'), // image
-  50, // renderWidth, changer aussi le calcul dans x si on le change
-  70, // renderHeight
-  65, // width
-  90, // height
-  2, // numberOfFrames
-  180, // x (200 = renderWidth)
-  93, // y
-  middleLane, // lane
-  0); // totalSteps
+	for (var i = orderedRankings.length - 1; i >= 0; i--) 
+	{
+		rank++;
+		rankerItem = document.createElement('div');
+		rankerItem.classList.add('rankerItem');
 
-let lifeSprite3 = new Sprite(document.getElementById('lifes'), // image
-  50, // renderWidth, changer aussi le calcul dans x si on le change
-  70, // renderHeight
-  65, // width
-  90, // height
-  2, // numberOfFrames
-  230, // x (200 = renderWidth)
-  93, // y
-  middleLane, // lane
-  0); // totalSteps
+		rankerRank = document.createElement('p');
+		rankerRank.textContent = rank;
 
+		rankerName = document.createElement('p');
+		rankerName.textContent = orderedRankings[i].name;
+
+		rankerScore = document.createElement('p');
+		rankerScore.textContent = orderedRankings[i].score;
+
+		rankerItem.appendChild(rankerRank);
+		rankerItem.appendChild(rankerName);
+		rankerItem.appendChild(rankerScore);
+		rankingsContent.appendChild(rankerItem);
+
+		if (rank == 10) 
+		{
+			return;
+		}
+	}
+}
 
 function mainGame()
 {
@@ -588,9 +635,75 @@ function mainGame()
 	//backgroundRight.style.backgroundPositionX = intervalCount + 'px';
 }
 
+// ****************************************************************************************************************************************************
+
+
+window.addEventListener('keydown', handleKeyDown);
+sendRanking.addEventListener('click', updateRanking);
+setObstaclesSteps();
+createAllBonus();
+
+if (localStorage.getItem('ranking')) 
+{
+	ranking = JSON.parse(localStorage.getItem('ranking'));
+
+	displayRanking(ranking);
+}
+
+
+let playerSprite = new Sprite(document.getElementById('bisou_misa_jaune'), // image
+							  180, // renderWidth, changer aussi le calcul dans x si on le change
+							  110, // renderHeight
+							  299, // width
+							  188, // height
+							  4, // numberOfFrames
+							  laneWidth + (laneWidth - 180)/2, // x (200 = renderWidth)
+							  canvas.height-110, // y
+							  middleLane, // lane
+							  0); // totalSteps
+
+
+
+let lifeSprite1 = new Sprite(document.getElementById('lifes'), // image
+  50, // renderWidth, changer aussi le calcul dans x si on le change
+  70, // renderHeight
+  65, // width
+  90, // height
+  2, // numberOfFrames
+  130, // x (200 = renderWidth)
+  93, // y
+  middleLane, // lane
+  0); // totalSteps
+
+let lifeSprite2 = new Sprite(document.getElementById('lifes'), // image
+  50, // renderWidth, changer aussi le calcul dans x si on le change
+  70, // renderHeight
+  65, // width
+  90, // height
+  2, // numberOfFrames
+  180, // x (200 = renderWidth)
+  93, // y
+  middleLane, // lane
+  0); // totalSteps
+
+let lifeSprite3 = new Sprite(document.getElementById('lifes'), // image
+  50, // renderWidth, changer aussi le calcul dans x si on le change
+  70, // renderHeight
+  65, // width
+  90, // height
+  2, // numberOfFrames
+  230, // x (200 = renderWidth)
+  93, // y
+  middleLane, // lane
+  0); // totalSteps
+
+
+
 let intervalCount = 0;
 let baseInterval = 15;
 //let intervalId = setInterval(mainGame, 10); // lancé dans background.js
+
+
 
 
 
@@ -638,6 +751,7 @@ function playAgain(){
 
 function startGame()
 {
+	sendRanking.disabled = false;
 	intervalCount = 0;
 	score = 0;
 
