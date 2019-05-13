@@ -1,7 +1,7 @@
 @font-face 
 {
     font-family: "DS-Digital";
-    src: url("font/DS-DIGI.ttf") format('truetype');
+    src: url("./font/DS-DIGI.ttf") format('truetype');
 }
 body
 {
@@ -99,78 +99,79 @@ img
 */
 
 .overlay {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background: rgba(0, 0, 0, 0.7);
-	transition: opacity 500ms;
-	visibility: hidden;
-	opacity: 0;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
 }
 
 .overlay:target {
-	visibility: visible;
-	opacity: 1;
+  visibility: visible;
+  opacity: 1;
 }
-  
+
 .popup {
-	margin: 70px auto;
-	padding: 20px;
-	background: #ffffff;
-	border-radius: 5px;
-	width: 85%;
-	position: relative;
-	transition: all 5s ease-in-out;
-	font-family: 'Gloria Hallelujah', cursive;
+  margin: 70px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 5px;
+  width: 50%;
+  position: relative;
+  transition: all 5s ease-in-out;
+  font-family: 'courier', cursive;
 }
-  
+
 .popup h2 {
-	margin-top: 0;
-	color: #333;
-	font-family: Tahoma, Arial, sans-serif;
+  text-align: center;
+  color: red;
+  font-family: 'DS-Digital', Tahoma, Arial, sans-serif;
+  font-size: 3rem;
 }
 
 .popup .close {
-	position: absolute;
-	top: 20px;
-	right: 30px;
-	transition: all 200ms;
-	font-size: 30px;
-	font-weight: bold;
-	text-decoration: none;
-	color: #333;
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
 }
 
 .popup .close:hover {
-	color: #E5F720;
+  color: #E5F720;
 }
 
 .popup .content-1,
 .content-2 {
-	max-height: 30%;
-	overflow: auto;
-	text-align: center;
+  max-height: 30%;
+  overflow: auto;
+  text-align: center;
 }
 
 .show {
-	visibility: visible !important;
-	opacity: 100 !important;
+  visibility: visible !important;
+  opacity: 100 !important;
 }
 
 #starRating li {
-	display: inline-block;
+  display: inline-block;
 }
 
 #play-again {
-	background-color: #141214;
-	padding: 0.7rem 1rem;
-	font-size: 1.1rem;
-	display: block;
-	margin: 0 auto;
-	width: 50%;
-	font-family: 'Gloria Hallelujah', cursive;
-	color: #ffffff;
-	border-radius: 5px;
+  background-color: #141214;
+  padding: 0.7rem 1rem;
+  font-size: 1.6rem;
+  display: block;
+  margin: 0 auto;
+  width: 50%;
+  font-family: 'DS-Digital';
+  color: #ffffff;
+  border-radius: 5px;
 }
